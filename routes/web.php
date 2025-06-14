@@ -8,6 +8,11 @@ Route::get('/', function () {
     return view('layouts.app');
 });
 
+Route::get('/shop', function () {
+    return view('shop');
+});
+
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
