@@ -11,7 +11,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        return view('auth.login',[
+            'title' => 'Login Form'
+        ]);
     }
 
     /**
@@ -60,5 +62,13 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function login(Request $request ){
+        $request->validate([
+            'username' => 'required|string|email',
+            'password' => 'required|string|min:8'
+        ]);
+        
     }
 }

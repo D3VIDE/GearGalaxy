@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -17,7 +18,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware('guest')->group(function(){
-    //Route::get('auth/login',[])
+Route::controller(UserController::class)->group(function(){
+   Route::get('auth/login', 'index')->name('login');
+   Route::post('auth/login','login')->name('login.post');
 });
 require __DIR__.'/auth.php';
