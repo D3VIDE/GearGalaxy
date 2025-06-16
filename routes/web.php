@@ -27,8 +27,10 @@ Route::middleware('auth')->group(function () {
 });
 // ! Ini Untuk Guest
 Route::controller(UserController::class)->group(function(){
-   Route::get('auth/login', 'index')->name('login');
+   Route::get('auth/login', 'showLoginForm')->name('login');
    Route::post('auth/login','login')->name('login.post');
+   Route::get('auth/register', 'showRegisterForm')->name('register');
+   Route::post('auth/register','create')->name('register.post');
 });
 // ! Ini Untuk Admin
 Route::middleware(['auth', EnsureIsAdmin::class])->group(function(){

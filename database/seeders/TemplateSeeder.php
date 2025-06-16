@@ -43,7 +43,7 @@ class TemplateSeeder extends Seeder
 
         // 2. Create admin user matching your schema
         DB::table('users')->insert([
-            'user_name' => 'System Administrator',
+            'user_name' => 'Admin',
             'email' => 'admin@example.com',
             'password' => Hash::make('Admin@123'), // Strong password recommended
             'role_id' => 1, // Admin role

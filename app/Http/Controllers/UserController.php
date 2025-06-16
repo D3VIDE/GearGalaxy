@@ -9,20 +9,31 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function showLoginForm()
     {
         return view('auth.login',[
             'title' => 'Login Form'
         ]);
     }
 
+    public function showRegisterForm()
+    {
+        return view('auth.register',[
+            'title' => 'Register Form'
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
-    }
+        $validated = $request->validate([
+            'user_name' => 'required|string|max:40',
+            'email' => 'required|string|email|unique|unique:users',
+            'password' => 'required|string|min:8|confirmed'
+        ]);
+    }   
 
     /**
      * Store a newly created resource in storage.
@@ -66,7 +77,7 @@ class UserController extends Controller
 
     public function login(Request $request ){
         $request->validate([
-            'username' => 'required|string|email',
+            'username' => 'required|string|max:255',
             'password' => 'required|string|min:8'
         ]);
         
