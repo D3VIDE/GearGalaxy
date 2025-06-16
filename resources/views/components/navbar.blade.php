@@ -40,13 +40,27 @@
                         <!-- Menu Dropdown -->
                         <div x-show="open" @click.away="open = false" x-transition
                             class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md py-2 z-50">
-                            <a href="/account" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">My Account</a>
-                            <a href="/orders" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">My Orders</a>
-                            <div class="border-t border-gray-200 my-1"></div>
-                            <a href="{{route('login')}}" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">Login</a>
-                            <a href="/auth/register"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">Register</a>
-                            <a href="/auth/logout" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">Logout</a>
+
+                            @auth
+                                <a href="/account" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">My Account</a>
+                                <a href="/orders" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">My Orders</a>
+                                <div class="border-t border-gray-200 my-1"></div>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit"
+                                        class="block w-full text-left px-4 py-2 text-red-600 hover:bg-indigo-50">
+                                        Logout
+                                    </button>
+                                </form>
+                            @endauth
+
+                            @guest
+                                <a href="{{ route('login') }}"
+                                    class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">Login</a>
+                                <a href="{{ route('register') }}"
+                                    class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">Register</a>
+                            @endguest
+
                         </div>
                     </div>
                 </div>
@@ -55,7 +69,7 @@
         </div>
     </nav>
 
-
+    <!-- ! diubah nanti -->
     <!-- Mobile Navbar -->
     <nav class="header-mobile header_sticky fixed top-0 left-0 right-0 bg-white shadow-md z-50 md:hidden">
         <div class="container mx-auto px-4 py-3">
@@ -87,13 +101,25 @@
                         </button>
                         <div x-show="open" @click.away="open = false" x-transition
                             class="absolute right-0 top-10 w-48 bg-white shadow-lg rounded-md py-2 z-50">
-                            <a href="/account" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">My Account</a>
-                            <a href="/orders" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">My Orders</a>
-                            <div class="border-t border-gray-200 my-1"></div>
-                            <a href="/auth/login" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">Login</a>
-                            <a href="/auth/register"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">Register</a>
-                            <a href="/auth/logout" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">Logout</a>
+                            @auth
+                                <a href="/account" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">My Account</a>
+                                <a href="/orders" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">My Orders</a>
+                                <div class="border-t border-gray-200 my-1"></div>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit"
+                                        class="block w-full text-left px-4 py-2 text-red-600 hover:bg-indigo-50">
+                                        Logout
+                                    </button>
+                                </form>
+                            @endauth
+
+                            @guest
+                                <a href="{{ route('login') }}"
+                                    class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">Login</a>
+                                <a href="{{ route('register') }}"
+                                    class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">Register</a>
+                            @endguest
                         </div>
                     </div>
                 </div>
@@ -103,17 +129,31 @@
 
 
 
-    <!-- Mobile menu (hidden by default) -->
-    <div class="mobile-menu hidden mt-4 pb-4">
-        <a href="/" class="block py-2 text-gray-700 hover:text-indigo-600">Home</a>
-        <a href="/shop" class="block py-2 text-gray-700 hover:text-indigo-600">Shop</a>
-        <a href="/about" class="block py-2 text-gray-700 hover:text-indigo-600">About</a>
-        <a href="/contact" class="block py-2 text-gray-700 hover:text-indigo-600">Contact</a>
-        <div class="border-t border-gray-200 mt-2 pt-2">
-            <a href="/login" class="block py-2 text-gray-700 hover:text-indigo-600">Login</a>
-            <a href="/register" class="block py-2 text-gray-700 hover:text-indigo-600">Register</a>
-        </div>
+<!-- Mobile menu (hidden by default) -->
+<div class="mobile-menu hidden mt-4 pb-4">
+    <a href="/" class="block py-2 text-gray-700 hover:text-indigo-600">Home</a>
+    <a href="/shop" class="block py-2 text-gray-700 hover:text-indigo-600">Shop</a>
+    <a href="/about" class="block py-2 text-gray-700 hover:text-indigo-600">About</a>
+    <a href="/contact" class="block py-2 text-gray-700 hover:text-indigo-600">Contact</a>
+
+    <div class="border-t border-gray-200 mt-2 pt-2">
+        @auth
+            <a href="/account" class="block py-2 text-gray-700 hover:text-indigo-600">My Account</a>
+            <a href="/orders" class="block py-2 text-gray-700 hover:text-indigo-600">My Orders</a>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="block w-full text-left py-2 text-red-600 hover:text-indigo-600">
+                    Logout
+                </button>
+            </form>
+        @endauth
+
+        @guest
+            <a href="{{ route('login') }}" class="block py-2 text-gray-700 hover:text-indigo-600">Login</a>
+            <a href="{{ route('register') }}" class="block py-2 text-gray-700 hover:text-indigo-600">Register</a>
+        @endguest
     </div>
+</div>
 
     <!-- Mobile search (hidden by default) -->
     <div class="mobile-search hidden mt-4">

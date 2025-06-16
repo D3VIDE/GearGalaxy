@@ -3,6 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+
+
 
 class UserController extends Controller
 {
@@ -30,9 +36,24 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'user_name' => 'required|string|max:40',
-            'email' => 'required|string|email|unique|unique:users',
+            'email' => 'required|string|email|unique:users',
             'password' => 'required|string|min:8|confirmed'
         ]);
+
+         // Buat user baru
+        $user = User::create([
+            'user_name' => $validated['user_name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role_id' => 2, // Default role: Regular User
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        // Auto login setelah register
+        Auth::login($user);
+
+        return redirect('/');
     }   
 
     /**
@@ -70,9 +91,12 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function logout(Request $request)
     {
-        //
+        Auth::logout(); // keluarin user
+        request()->session()->invalidate(); // invalidate session
+        request()->session()->regenerateToken(); // regenerasi token CSRF
+        return redirect('/');
     }
 
     public function login(Request $request ){

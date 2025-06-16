@@ -8,15 +8,15 @@
             </div>
 
             <!-- Form -->
-            <form method="POST" action="{{ route('register') }}">
+            <form method="POST" action="{{ route('register.post') }}">
                 @csrf
 
                 <!-- Name -->
                 <div class="mb-4">
                     <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                    <input id="name" name="name" type="text" value="{{ old('name') }}" required autofocus
+                    <input id="user_name" name="user_name" type="text" value="{{ old('user_name') }}" required autofocus
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    @error('name')
+                    @error('user_name')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
