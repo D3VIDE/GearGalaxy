@@ -100,10 +100,15 @@ class UserController extends Controller
     }
 
     public function login(Request $request ){
-        $request->validate([
-            'username' => 'required|string|max:255',
-            'password' => 'required|string|min:8'
-        ]);
-        
+    $credentials = $request->validate([
+        'email' => 'required|string|email|max:255',
+        'password' => 'required|string|min:8'
+    ]);
+
+    // Coba melakukan autentikasi
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+         return redirect()->intended('/');
+        }
     }
 }
