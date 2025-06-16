@@ -25,16 +25,17 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
+// ! Ini Untuk Guest
 Route::controller(UserController::class)->group(function(){
    Route::get('auth/login', 'index')->name('login');
    Route::post('auth/login','login')->name('login.post');
 });
-
+// ! Ini Untuk Admin
 Route::middleware(['auth', EnsureIsAdmin::class])->group(function(){
     Route::get('/admin/dashboard', [AdminController::class, 'index']);
 });
 
+// ! Ini Untuk User
 Route::middleware(['auth', EnsureIsRegularUser::class])->group(function(){
     Route::get('',[UserController::class,''])->name('');
 
