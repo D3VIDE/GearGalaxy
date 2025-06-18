@@ -16,10 +16,9 @@ class EnsureIsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(Auth::check() && Auth::user()->roles_id === 1){
-            return $next($request);
+        if (!Auth::check() || Auth::user()->role_id !== 1) {
+            abort(403, 'Unauthorized access');
         }
-        abort(403, 'Unauthorized access');
-       
+        return $next($request);
     }
 }
