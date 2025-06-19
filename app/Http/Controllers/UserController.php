@@ -15,6 +15,12 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+     public function DisplayHomePage(){
+        return view ('HomePage',[
+            'title' => 'Home'
+        ]);
+     }
     public function showLoginForm()
     {
         return view('auth.login', [

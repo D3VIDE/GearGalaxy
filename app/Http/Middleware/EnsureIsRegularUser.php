@@ -16,14 +16,11 @@ class EnsureIsRegularUser
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check()) {
-            return redirect()->route('login')->with('error', 'Anda harus login terlebih dahulu');
-        }
 
-        if (Auth::user()->role_id !== 2) {
-            abort(403, 'Hanya untuk pengguna biasa');
+    if (Auth::check() && Auth::user()->roles_id == 2) {
+            return $next($request);
         }
-
-        return $next($request);
+        return redirect()->route('login')->with('error', 'Anda harus login terlebih dahulu');
+        
     }
 }
