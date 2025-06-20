@@ -30,7 +30,8 @@ Route::middleware('guest')->group(function () {
 
 // ! Ini Untuk Admin
 Route::middleware(['auth', EnsureIsAdmin::class])->group(function(){
-    Route::get('/admin/dashboard', [AdminController::class, 'index']);
+    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('dashboard');
+    Route::get('/admin/products/Produk',[AdminController::class,'showAddProdukForm'])->name('addProduk');
 });
 
 // ! Ini Untuk User

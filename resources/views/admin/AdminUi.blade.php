@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>GG | {{ $title }}</title>
+    <title>GG | {{ $title ?? Dashboard}}</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -22,14 +22,11 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-sans antialiased">
-    <div class="navbar">
-        <!-- Navbar Component -->
-        <x-navbar />
-    </div>
-     @yield('content')
-    
-    
+<body class="bg-gray-50 ">
+  <div class="sidebar">
+      @include('components.sidebar')
+  </div>
+  @yield('content')
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </body>
 
