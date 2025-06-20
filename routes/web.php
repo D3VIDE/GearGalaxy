@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CartController;
 use App\Http\Middleware\EnsureIsAdmin;
 use App\Http\Middleware\EnsureIsRegularUser;
 use Illuminate\Support\Facades\Route;
@@ -12,6 +13,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [UserController::class, 'DisplayHomePage'])->name('HomePage');
 Route::post('auth/logout',[UserController::class, 'logout'])->name('logout');
+// Cart routes
+Route::get('/cart', function() {return view('user.cart');})->name('cart');
+Route::get('/checkout', function() {return view('user.checkout');})->name('checkout');
+Route::get('/confirmation', function() {return view('user.confirmation');})->name('confirmation');
 
 // Route Guest (login/register)
 Route::middleware('guest')->group(function () {
