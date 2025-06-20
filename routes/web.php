@@ -9,18 +9,18 @@ use Illuminate\Support\Facades\Route;
 
 
 
-// ! Ini Untuk Guest
+
+Route::get('/', [UserController::class, 'DisplayHomePage'])->name('HomePage');
+Route::post('auth/logout',[UserController::class, 'logout'])->name('logout');
+
+// Route Guest (login/register)
 Route::middleware('guest')->group(function () {
     Route::get('auth/login', [UserController::class, 'showLoginForm'])->name('login');
     Route::post('auth/login', [UserController::class, 'login'])->name('login.post');
     Route::get('auth/register', [UserController::class, 'showRegisterForm'])->name('register');
     Route::post('auth/register', [UserController::class, 'create'])->name('register.post');
-    Route::get('HomePage',[UserController::class,'DisplayHomePage'])->name('HomePage');
-    Route::get('/', function () {
-    return view('HomePage');
 });
-});
-    Route::post('auth/logout',[UserController::class, 'logout'])->name('logout');
+
 // ! Ini Untuk Admin
 Route::middleware(['auth', EnsureIsAdmin::class])->group(function(){
     Route::get('/admin/dashboard', [AdminController::class, 'index']);
