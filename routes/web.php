@@ -19,6 +19,8 @@ Route::middleware('guest')->group(function () {
     Route::post('auth/login', [UserController::class, 'login'])->name('login.post');
     Route::get('auth/register', [UserController::class, 'showRegisterForm'])->name('register');
     Route::post('auth/register', [UserController::class, 'create'])->name('register.post');
+    Route::get('auth/forgot-password', [UserController::class, 'showForgotPasswordForm'])->name('forgot.password');
+    Route::post('auth/forgot-password', [UserController::class, 'resetPassword'])->name('forgot.password.post');
 });
 
 // ! Ini Untuk Admin

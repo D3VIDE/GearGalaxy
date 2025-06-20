@@ -35,6 +35,13 @@ class UserController extends Controller
         ]);
     }
 
+    public function showForgotPasswordForm()
+    {
+        return view('auth.forgot-password', [
+            'title' => 'Forgot Password Form'
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -103,6 +110,29 @@ class UserController extends Controller
         request()->session()->invalidate(); // invalidate session
         request()->session()->regenerateToken(); // regenerasi token CSRF
         return redirect('/');
+    }
+    
+    // Forgot Password
+    public function resetPassword(Request $request) {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:8|confirmed'
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()
+                ->withInput()
+                ->withErrors(['email' => 'Email not found in our records']);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->password)
+        ]);
+
+        return redirect()->route('login')
+            ->with('success', 'Password updated successfully! Please login with your new password');
     }
 
     public function login(Request $request)

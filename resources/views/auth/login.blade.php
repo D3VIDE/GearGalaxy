@@ -44,8 +44,8 @@
                 Create Account
             </a>
             <span class="mx-2 text-gray-400">|</span>
-            <a href="" class="font-medium text-indigo-600 hover:text-indigo-500">
-                My Account
+            <a href="{{ route('forgot.password') }}" class="font-medium text-indigo-600 hover:text-indigo-500">
+                Forgot Password
             </a>
         </div>
     </div>
