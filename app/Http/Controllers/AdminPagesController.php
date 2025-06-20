@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class AdminController extends Controller
+class AdminPagesController extends Controller
 {
-    public function index()  // <-- Method ini harus ada
+        public function index()  // <-- Method ini harus ada
     {
         return view('admin.dashboard',[
             'title' => 'Dashboard'
@@ -27,6 +27,14 @@ class AdminController extends Controller
     }
 
     public function addVariant(){
+        
+    }
+
+    public function addCategory(){
+
+    }
+
+    public function displayCategoryForm(){
         
     }
 }

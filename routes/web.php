@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminPagesController;
 use App\Http\Controllers\CartController;
 use App\Http\Middleware\EnsureIsAdmin;
 use App\Http\Middleware\EnsureIsRegularUser;
@@ -30,9 +30,9 @@ Route::middleware('guest')->group(function () {
 
 // ! Ini Untuk Admin
 Route::middleware(['auth', EnsureIsAdmin::class])->group(function(){
-    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('dashboard');
-    Route::get('/admin/products/Produk',[AdminController::class,'showAddProdukForm'])->name('addProduk');
-    Route::post('/admin/products/Produk',[AdminController::class,'addProduk'])->name('addProduk.post');
+    Route::get('/admin/dashboard', [AdminPagesController::class, 'index'])->name('dashboard');
+    Route::get('/admin/products/Produk',[AdminPagesController::class,'showAddProdukForm'])->name('addProduk');
+    Route::post('/admin/products/Produk',[AdminPagesController::class,'addProduk'])->name('addProduk.post');
 });
 
 // ! Ini Untuk User
