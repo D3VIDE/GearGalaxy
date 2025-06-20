@@ -138,20 +138,27 @@ class UserController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => 'required|string|email|max:255',
-            'password' => 'required|string|min:8'
+            'email' => 'required|email',
+            'password' => 'required|min:8'
         ]);
-
-        // Coba melakukan autentikasi
+    
+        // Hapus parameter remember_token dari Auth::attempt
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            // Periksa role user
+            
             if (Auth::user()->role_id == 1) { 
-                return redirect()->intended('admin/dashboard');
+                return redirect()->intended('/admin/dashboard')
+                    ->with('success', 'Login berhasil!');
             }
-
-            // Untuk user biasa
-            return redirect()->intended('/');
+    
+            return redirect()->intended('/')
+                ->with('success', 'Login berhasil!');
         }
+    
+        return back()
+            ->withInput($request->only('email'))
+            ->withErrors([
+                'email' => 'Email atau password yang Anda masukkan salah',
+            ]);
     }
 }
