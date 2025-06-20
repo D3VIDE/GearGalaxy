@@ -124,7 +124,7 @@ class UserController extends Controller
         if (!$user) {
             return back()
                 ->withInput()
-                ->withErrors(['email' => 'Email not found in our records']);
+                ->withErrors(['email' => 'Email not found in the system.']);
         }
 
         $user->update([
@@ -139,26 +139,39 @@ class UserController extends Controller
     {
         $credentials = $request->validate([
             'email' => 'required|email',
-            'password' => 'required|min:8'
+            'password' => 'required|min:8',
         ]);
-    
-        // Hapus parameter remember_token dari Auth::attempt
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            
-            if (Auth::user()->role_id == 1) { 
-                return redirect()->intended('/admin/dashboard')
-                    ->with('success', 'Login berhasil!');
-            }
-    
-            return redirect()->intended('/')
-                ->with('success', 'Login berhasil!');
+
+        // Cari user berdasarkan email
+        $user = User::where('email', $credentials['email'])->first();
+
+        if (!$user) {
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors([
+                    'email' => 'Email not found in the system.',
+                ]);
         }
-    
-        return back()
-            ->withInput($request->only('email'))
-            ->withErrors([
-                'email' => 'Email atau password yang Anda masukkan salah',
-            ]);
+
+        // Cek password
+        if (!Hash::check($credentials['password'], $user->password)) {
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors([
+                    'password' => 'Password does not match the email given.',
+                ]);
+        }
+
+        // Login berhasil
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        // Redirect sesuai role
+        if ($user->role_id == 1) {
+            return redirect()->intended('/admin/dashboard');
+        }
+
+        return redirect()->intended('/');
+  
     }
 }

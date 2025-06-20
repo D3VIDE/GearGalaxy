@@ -33,9 +33,6 @@
                        value="{{ old('email') }}"
                        class="w-full px-3 py-2 border {{ $errors->has('email') ? 'border-red-500' : 'border-gray-300' }} rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                        placeholder="your@email.com">
-                @if($errors->has('email'))
-                    <p class="mt-1 text-sm text-red-600">{{ $errors->first('email') }}</p>
-                @endif
             </div>
 
             <!-- Password -->
@@ -44,9 +41,6 @@
                 <input id="password" name="password" type="password" required
                        class="w-full px-3 py-2 border {{ $errors->has('password') ? 'border-red-500' : 'border-gray-300' }} rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                        placeholder="••••••••">
-                @if($errors->has('password'))
-                    <p class="mt-1 text-sm text-red-600">{{ $errors->first('password') }}</p>
-                @endif
             </div>
 
             <!-- Login Button -->
