@@ -1,4 +1,4 @@
-<div>  
+<div>
     <div class="w-64 bg-slate-800 p-0 shadow-lg fixed h-screen overflow-y-auto">
         <div class="p-6 border-b border-slate-700">
             <h2 class="text-xl font-extrabold text-slate-100 flex items-center gap-2">
@@ -17,6 +17,37 @@
 
                 <span>Dashboard</span>
             </a>
+            <div class="mt-2">
+                <div
+                    class="px-5 py-2 mx-3 text-slate-400 text-sm font-medium uppercase tracking-wider flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M6.429 9.75 2.25 12l4.179 2.25m0-4.5 5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0 4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0-5.571 3-5.571-3" />
+                    </svg>
+                    CATEGORY
+                </div>
+
+                <a href="{{ route('addProduk') }}"
+                    class="px-8 py-2 mx-3 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-blue-500 font-medium flex items-center gap-3 cursor-pointer transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="currentColor"
+                        class="bi bi-suit-diamond" viewBox="0 0 16 16">
+                        <path
+                            d="M8.384 1.226a.463.463 0 0 0-.768 0l-4.56 6.468a.54.54 0 0 0 0 .612l4.56 6.469a.463.463 0 0 0 .768 0l4.56-6.469a.54.54 0 0 0 0-.612zM6.848.613a1.39 1.39 0 0 1 2.304 0l4.56 6.468a1.61 1.61 0 0 1 0 1.838l-4.56 6.468a1.39 1.39 0 0 1-2.304 0L2.288 8.92a1.61 1.61 0 0 1 0-1.838z" />
+                    </svg>
+                    <span class="text-sm">Add Category</span>
+                </a>
+
+                                <a href="{{ route('addProduk') }}"
+                    class="px-8 py-2 mx-3 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-blue-500 font-medium flex items-center gap-3 cursor-pointer transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="currentColor"
+                        class="bi bi-suit-diamond" viewBox="0 0 16 16">
+                        <path
+                            d="M8.384 1.226a.463.463 0 0 0-.768 0l-4.56 6.468a.54.54 0 0 0 0 .612l4.56 6.469a.463.463 0 0 0 .768 0l4.56-6.469a.54.54 0 0 0 0-.612zM6.848.613a1.39 1.39 0 0 1 2.304 0l4.56 6.468a1.61 1.61 0 0 1 0 1.838l-4.56 6.468a1.39 1.39 0 0 1-2.304 0L2.288 8.92a1.61 1.61 0 0 1 0-1.838z" />
+                    </svg>
+                    <span class="text-sm">List Product</span>
+                </a>
+            </div>
             <!-- Products Group -->
             <div class="mt-2">
                 <!-- Group Header -->
@@ -33,11 +64,21 @@
                 <!-- Add Product -->
                 <a href="{{ route('addProduk') }}"
                     class="px-8 py-2 mx-3 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-blue-500 font-medium flex items-center gap-3 cursor-pointer transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="currentColor"
+                        class="bi bi-suit-diamond" viewBox="0 0 16 16">
+                        <path
+                            d="M8.384 1.226a.463.463 0 0 0-.768 0l-4.56 6.468a.54.54 0 0 0 0 .612l4.56 6.469a.463.463 0 0 0 .768 0l4.56-6.469a.54.54 0 0 0 0-.612zM6.848.613a1.39 1.39 0 0 1 2.304 0l4.56 6.468a1.61 1.61 0 0 1 0 1.838l-4.56 6.468a1.39 1.39 0 0 1-2.304 0L2.288 8.92a1.61 1.61 0 0 1 0-1.838z" />
+                    </svg>
                     <span class="text-sm">Add Product</span>
                 </a>
                 <!-- list produk-->
                 <a href=""
                     class="px-8 py-2 mx-3 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-blue-500 font-medium flex items-center gap-3 cursor-pointer transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="currentColor"
+                        class="bi bi-suit-diamond" viewBox="0 0 16 16">
+                        <path
+                            d="M8.384 1.226a.463.463 0 0 0-.768 0l-4.56 6.468a.54.54 0 0 0 0 .612l4.56 6.469a.463.463 0 0 0 .768 0l4.56-6.469a.54.54 0 0 0 0-.612zM6.848.613a1.39 1.39 0 0 1 2.304 0l4.56 6.468a1.61 1.61 0 0 1 0 1.838l-4.56 6.468a1.39 1.39 0 0 1-2.304 0L2.288 8.92a1.61 1.61 0 0 1 0-1.838z" />
+                    </svg>
                     <span class="text-sm">List Produk</span>
                 </a>
             </div>

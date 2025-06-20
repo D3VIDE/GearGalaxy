@@ -12,11 +12,17 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', [UserController::class, 'DisplayHomePage'])->name('HomePage');
-Route::post('auth/logout',[UserController::class, 'logout'])->name('logout');
+Route::post('auth/logout', [UserController::class, 'logout'])->name('logout');
 // Cart routes
-Route::get('/cart', function() {return view('user.cart');})->name('cart');
-Route::get('/checkout', function() {return view('user.checkout');})->name('checkout');
-Route::get('/confirmation', function() {return view('user.confirmation');})->name('confirmation');
+Route::get('/cart', function () {
+    return view('user.cart');
+})->name('cart');
+Route::get('/checkout', function () {
+    return view('user.checkout');
+})->name('checkout');
+Route::get('/confirmation', function () {
+    return view('user.confirmation');
+})->name('confirmation');
 
 // Route Guest (login/register)
 Route::middleware('guest')->group(function () {
@@ -29,10 +35,12 @@ Route::middleware('guest')->group(function () {
 });
 
 // ! Ini Untuk Admin
-Route::middleware(['auth', EnsureIsAdmin::class])->group(function(){
+Route::middleware(['auth', EnsureIsAdmin::class])->group(function () {
     Route::get('/admin/dashboard', [AdminPagesController::class, 'index'])->name('dashboard');
-    Route::get('/admin/products/Produk',[AdminPagesController::class,'showAddProdukForm'])->name('addProduk');
-    Route::post('/admin/products/Produk',[AdminPagesController::class,'addProduk'])->name('addProduk.post');
+    Route::get('/admin/products/Produk', [AdminPagesController::class, 'showAddProdukForm'])->name('addProduk');
+    Route::post('/admin/products/Produk', [AdminPagesController::class, 'addProduk'])->name('addProduk.post');
+    Route::get('/admin/products/Category', [AdminPagesController::class, 'displayCategoryForm'])->name('category');
+    Route::post('/admin/products/Category', [AdminPagesController::class, 'addCategory'])->name('addCategory.post');
 });
 
 // ! Ini Untuk User
@@ -40,4 +48,3 @@ Route::middleware(['auth', EnsureIsAdmin::class])->group(function(){
 //     Route::get('',[UserController::class,'']);
 
 // });
-
