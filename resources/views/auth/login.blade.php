@@ -1,7 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.auth')
 
 @section('content')
-<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen flex items-center justify-center bg-gray-50">
     <div class="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
         <!-- Header -->
         <div class="text-center mb-8">
@@ -28,6 +28,9 @@
                     placeholder="••••••••">
             </div>
 
+            <!-- Divider -->
+            <div class="border-t border-gray-200 my-4"></div>
+
             <!-- Login Button -->
             <div>
                 <button type="submit"
@@ -46,6 +49,12 @@
             <span class="mx-2 text-gray-400">|</span>
             <a href="{{ route('forgot.password') }}" class="font-medium text-indigo-600 hover:text-indigo-500">
                 Forgot Password
+            </a>
+        </div>
+        <!-- Back to Login -->
+        <div class="mt-6 text-center text-sm">
+            <a href="{{ route('HomePage') }}" class="font-medium text-slate-500 hover:text-slate-400">
+                Back to Main Page
             </a>
         </div>
     </div>

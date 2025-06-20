@@ -1,14 +1,11 @@
-@extends('layouts.app')
+@extends('layouts.auth')
 
 @section('content')
 <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
         <!-- Header -->
         <div class="text-center mb-8">
-            <h2 class="text-3xl font-bold text-gray-900">RESET PASSWORD</h2>
-            <p class="mt-2 text-sm text-gray-600">
-                Enter your email and new password
-            </p>
+            <h2 class="text-3xl font-bold text-gray-900">FORGOT PASSWORD</h2>
         </div>
 
         <!-- Form -->
@@ -46,6 +43,9 @@
                     placeholder="••••••••">
             </div>
 
+            <!-- Divider -->
+            <div class="border-t border-gray-200 my-4"></div>
+
             <!-- Submit Button -->
             <div>
                 <button type="submit"
@@ -57,8 +57,8 @@
 
         <!-- Back to Login -->
         <div class="mt-6 text-center text-sm">
-            <a href="{{ route('login') }}" class="font-medium text-indigo-600 hover:text-indigo-500">
-                ← Back to login
+            <a href="{{ route('login') }}" class="font-medium text-slate-500 hover:text-slate-400">
+                Back to Login Page
             </a>
         </div>
     </div>
