@@ -48,26 +48,27 @@ class UserController extends Controller
     public function create(Request $request)
     {
         $validated = $request->validate([
-            'user_name' => 'required|string|max:40',
-            'email' => 'required|string|email|unique:users',
+            'user_name' => 'required|string|max:40|unique:users,user_name',
+            'email' => 'required|string|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed'
         ]);
 
-        // Buat user baru
+        // Create user
         $user = User::create([
             'user_name' => $validated['user_name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role_id' => 2, // Default role: Regular User
+            'role_id' => 2, // Regular user
             'created_at' => now(),
             'updated_at' => now()
         ]);
 
-        // Auto login setelah register
+        // Auto-login
         Auth::login($user);
 
         return redirect('/');
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -113,27 +114,31 @@ class UserController extends Controller
     }
     
     // Forgot Password
-    public function resetPassword(Request $request) {
+    public function resetPassword(Request $request)
+    {
+        // Validate the request input
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:8|confirmed'
         ]);
 
+        // Check if the user with the provided email exists
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
             return back()
-                ->withInput()
+                ->withInput($request->only('email'))
                 ->withErrors(['email' => 'Email not found in the system.']);
         }
 
+        // Update the user's password
         $user->update([
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->route('login')
-            ->with('success', 'Password updated successfully! Please login with your new password');
+        return redirect()->route('login');
     }
+
 
     public function login(Request $request)
     {

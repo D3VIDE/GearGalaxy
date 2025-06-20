@@ -43,6 +43,9 @@
                        placeholder="••••••••">
             </div>
 
+            <!-- Divider -->
+            <div class="border-t border-gray-200 my-4"></div>
+
             <!-- Login Button -->
             <div>
                 <button type="submit"
@@ -63,6 +66,14 @@
                 Forgot Password
             </a>
         </div>
+
+        <!-- Back to Main Page -->
+        <div class="mt-6 text-center text-sm">
+            <a href="{{ route('HomePage') }}" class="font-medium text-slate-500 hover:text-slate-400">
+                Back to Main Page
+            </a>
+        </div>
+
     </div>
 </div>
 @endsection
