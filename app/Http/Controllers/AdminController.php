@@ -18,7 +18,7 @@ class AdminController extends Controller
             'title' => 'Add Produk'
         ]);
     }
-    public function addProduct(){
+    public function addProduk(){
 
     }
 

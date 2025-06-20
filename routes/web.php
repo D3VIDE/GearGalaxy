@@ -32,6 +32,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth', EnsureIsAdmin::class])->group(function(){
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/admin/products/Produk',[AdminController::class,'showAddProdukForm'])->name('addProduk');
+    Route::post('/admin/products/Produk',[AdminController::class,'addProduk'])->name('addProduk.post');
 });
 
 // ! Ini Untuk User
