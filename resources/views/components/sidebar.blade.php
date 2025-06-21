@@ -28,7 +28,7 @@
                     CATEGORY
                 </div>
 
-                <a href="{{ route('addProduk') }}"
+                <a href="{{ route('category') }}"
                     class="px-8 py-2 mx-3 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-blue-500 font-medium flex items-center gap-3 cursor-pointer transition-all">
                     <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="currentColor"
                         class="bi bi-suit-diamond" viewBox="0 0 16 16">
