@@ -9,6 +9,27 @@
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-2xl font-bold text-gray-800">ADD PRODUCT</h1>
             </div>
+            @if ($errors->any())
+                <div class="mb-4 p-3 bg-red-100 text-red-700 rounded">
+                    <ul class="list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            @if (session('success'))
+                <div class="mb-4 p-3 bg-green-100 text-green-700 rounded">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="mb-4 p-3 bg-red-100 text-red-700 rounded">
+                    {{ session('error') }}
+                </div>
+            @endif
             <!-- Form -->
             <form method="POST" action="{{ route('addProduk.post') }}" enctype="multipart/form-data">
                 @csrf
@@ -38,7 +59,9 @@
                                 class="w-1/4 px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                                 required>
                                 <option value="" selected disabled>Choose category</option>
-
+                                @foreach ($categories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->category_name }}</option>
+                                @endforeach
                             </select>
                         </div>
 
