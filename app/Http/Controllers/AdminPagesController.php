@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 class AdminPagesController extends Controller
 {
         public function index()  // <-- Method ini harus ada
@@ -109,7 +110,7 @@ public function addCategory(Request $request)
             }
 
             // Gunakan DB facade untuk langsung insert ke tabel variants
-            \DB::table('variants')->insert([
+            DB::table('variants')->insert([
                 'products_id' => $validated['products_id'],
                 'price' => $validated['price'],
                 'stock' => $validated['stock'],
@@ -125,7 +126,7 @@ public function addCategory(Request $request)
     }
 
     public function displayListVariant(){
-        $variants = \DB::table('variants')
+        $variants = DB::table('variants')
             ->join('products', 'variants.products_id', '=', 'products.id')
             ->select('variants.*', 'products.product_name')
             ->get();
