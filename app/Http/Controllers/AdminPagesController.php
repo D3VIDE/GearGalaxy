@@ -35,7 +35,7 @@ class AdminPagesController extends Controller
                 'category_id' => $validated['category_id'],
                 'product_description' => $validated['product_description']
             ]);
-            return redirect()->route('dashboard')->with('success', 'Kategori berhasil ditambahkan!');
+            return redirect()->route('addProduk')->with('success', 'Produk berhasil ditambahkan!');
         }catch(\Exception $e){
              return back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
