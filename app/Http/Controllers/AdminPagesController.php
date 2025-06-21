@@ -63,11 +63,6 @@ class AdminPagesController extends Controller
         ]);
     }
 
-
-    public function addVariant(Request $request){
-
-    }
-
 public function addCategory(Request $request)
 {
     $request->validate([
@@ -89,4 +84,56 @@ public function addCategory(Request $request)
             'title' => 'Add Category'
         ]);
     }
+
+    // Variant
+    public function showAddVariantForm(){
+        $products = Product::all();
+        return view('admin.products.Variant', [
+            'title' => 'Add Variant',
+            'products' => $products
+        ]);
+    }
+
+    public function addVariant(Request $request){
+        $validated = $request->validate([
+            'products_id' => 'required|exists:products,id',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        try {
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                $imagePath = $request->file('image')->store('variants', 'public');
+            }
+
+            // Gunakan DB facade untuk langsung insert ke tabel variants
+            \DB::table('variants')->insert([
+                'products_id' => $validated['products_id'],
+                'price' => $validated['price'],
+                'stock' => $validated['stock'],
+                'image' => $imagePath,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            return redirect()->route('addVariant')->with('success', 'Variant berhasil ditambahkan!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    public function displayListVariant(){
+        $variants = \DB::table('variants')
+            ->join('products', 'variants.products_id', '=', 'products.id')
+            ->select('variants.*', 'products.product_name')
+            ->get();
+            
+        return view('admin.products.ListVariant', [
+            'title' => 'List Variant',
+            'variants' => $variants
+        ]);
+    }
 }
+

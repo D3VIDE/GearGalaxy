@@ -41,9 +41,13 @@ Route::middleware(['auth', EnsureIsAdmin::class])->group(function () {
     Route::post('/admin/products/Produk', [AdminPagesController::class, 'addProduk'])->name('addProduk.post');
     Route::get('/admin/products/Category', [AdminPagesController::class, 'displayCategoryForm'])->name('category');
     Route::post('/admin/products/Category', [AdminPagesController::class, 'addCategory'])->name('addCategory.post');
-    # List produk dan category
+    // List produk dan category
     Route::get('/admin/products/list', [AdminPagesController::class, 'displayListProduct'])->name('ListProduk');
     Route::get('/admin/categories/list', [AdminPagesController::class, 'displayListCategory'])->name('ListCategory');
+    // Variant
+    Route::get('/admin/products/variant', [AdminPagesController::class, 'showAddVariantForm'])->name('addVariant');
+    Route::post('/admin/products/variant', [AdminPagesController::class, 'addVariant'])->name('addVariant.post');
+    Route::get('/admin/variants/list', [AdminPagesController::class, 'displayListVariant'])->name('ListVariant');
 });
 
 // ! Ini Untuk User
