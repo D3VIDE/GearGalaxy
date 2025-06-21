@@ -38,14 +38,14 @@
                     <span class="text-sm">Add Category</span>
                 </a>
 
-                                <a href="{{ route('addProduk') }}"
+                <a href="{{ route('ListCategory') }}"
                     class="px-8 py-2 mx-3 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-blue-500 font-medium flex items-center gap-3 cursor-pointer transition-all">
                     <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="currentColor"
                         class="bi bi-suit-diamond" viewBox="0 0 16 16">
                         <path
                             d="M8.384 1.226a.463.463 0 0 0-.768 0l-4.56 6.468a.54.54 0 0 0 0 .612l4.56 6.469a.463.463 0 0 0 .768 0l4.56-6.469a.54.54 0 0 0 0-.612zM6.848.613a1.39 1.39 0 0 1 2.304 0l4.56 6.468a1.61 1.61 0 0 1 0 1.838l-4.56 6.468a1.39 1.39 0 0 1-2.304 0L2.288 8.92a1.61 1.61 0 0 1 0-1.838z" />
                     </svg>
-                    <span class="text-sm">List Product</span>
+                    <span class="text-sm">List Category</span>
                 </a>
             </div>
             <!-- Products Group -->
@@ -72,7 +72,7 @@
                     <span class="text-sm">Add Product</span>
                 </a>
                 <!-- list produk-->
-                <a href=""
+                <a href="{{ route('ListProduk') }}"
                     class="px-8 py-2 mx-3 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-blue-500 font-medium flex items-center gap-3 cursor-pointer transition-all">
                     <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="currentColor"
                         class="bi bi-suit-diamond" viewBox="0 0 16 16">

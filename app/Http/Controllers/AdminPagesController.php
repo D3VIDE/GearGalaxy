@@ -41,9 +41,28 @@ class AdminPagesController extends Controller
         }
     }
 
-    public function displayListProduct(){
-
+    // Untuk List Produk
+    public function displayListProduct()
+    {
+        $products = Product::with('category')->get(); // Hapus orderBy('created_at')
+        
+        return view('admin.products.ListProduk', [
+            'title' => 'List Produk',
+            'products' => $products
+        ]);
     }
+
+    // Untuk List Kategori
+    public function displayListCategory()
+    {
+        $categories = Category::all(); // Hapus orderBy('created_at')
+        
+        return view('admin.products.ListCategory', [
+            'title' => 'List Kategori',
+            'categories' => $categories
+        ]);
+    }
+
 
     public function addVariant(Request $request){
 
