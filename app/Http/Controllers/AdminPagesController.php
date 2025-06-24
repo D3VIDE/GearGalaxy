@@ -2,28 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
-use App\Models\Product;
+use App\Models\{Category, Product, Variant, VariantAttribute};
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
+
 class AdminPagesController extends Controller
 {
-        public function index()  // <-- Method ini harus ada
+    public function index()
     {
-        return view('admin.dashboard',[
+        return view('admin.dashboard', [
             'title' => 'Dashboard'
-        ]); // Sesuaikan dengan view Anda
+        ]);
     }
 
-    public function showAddProdukForm(){
+    public function showAddProdukForm()
+    {
         $categories = Category::all();
-        return view('admin.products.Produk',[
+        return view('admin.products.Produk', [
             'title' => 'Add Produk',
             'categories' => $categories
         ]);
     }
+
     public function addProduk(Request $request)
     {
         $validated = $request->validate([
@@ -32,7 +32,6 @@ class AdminPagesController extends Controller
             'product_description' => 'required|string'
         ]);
 
-        // Check for duplicate product in the same category
         $exists = Product::where('product_name', $validated['product_name'])
             ->where('category_id', $validated['category_id'])
             ->exists();
@@ -54,11 +53,9 @@ class AdminPagesController extends Controller
         }
     }
 
-
-    // Untuk List Produk
     public function displayListProduct(Request $request)
     {
-        $categories = DB::table('categories')->get(); // ambil semua kategori
+        $categories = Category::all();
         $selectedCategoryId = $request->input('category_id');
 
         $query = Product::with('category');
@@ -77,11 +74,9 @@ class AdminPagesController extends Controller
         ]);
     }
 
-    // Untuk List Kategori
     public function displayListCategory()
     {
-        $categories = Category::all(); // Hapus orderBy('created_at')
-        
+        $categories = Category::all();
         return view('admin.products.ListCategory', [
             'title' => 'List Kategori',
             'categories' => $categories
@@ -105,14 +100,15 @@ class AdminPagesController extends Controller
         }
     }
 
-    public function displayCategoryForm(){
-        return view('admin.products.category',[
+    public function displayCategoryForm()
+    {
+        return view('admin.products.category', [
             'title' => 'Add Category'
         ]);
     }
 
-    // Variant
-    public function showAddVariantForm(){
+    public function showAddVariantForm()
+    {
         $products = Product::all();
         return view('admin.products.Variant', [
             'title' => 'Add Variant',
@@ -130,9 +126,7 @@ class AdminPagesController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        // Check for duplicate variant in the same product
-        $exists = DB::table('variants')
-            ->where('products_id', $validated['products_id'])
+        $exists = Variant::where('products_id', $validated['products_id'])
             ->where('variant_name', $validated['variant_name'])
             ->exists();
 
@@ -146,14 +140,12 @@ class AdminPagesController extends Controller
                 $imagePath = $request->file('image')->store('variants', 'public');
             }
 
-            DB::table('variants')->insert([
+            Variant::create([
                 'products_id' => $validated['products_id'],
                 'variant_name' => $validated['variant_name'],
                 'price' => $validated['price'],
                 'stock' => $validated['stock'],
                 'image' => $imagePath,
-                'created_at' => now(),
-                'updated_at' => now(),
             ]);
 
             return redirect()->route('addVariant')->with('success', 'Variant successfully added!');
@@ -162,21 +154,14 @@ class AdminPagesController extends Controller
         }
     }
 
-
     public function displayListVariant(Request $request)
     {
-        $products = DB::table('products')->get();
+        $products = Product::all();
         $selectedProductId = $request->input('product_id');
 
-        $variantsQuery = DB::table('variants')
-            ->join('products', 'variants.products_id', '=', 'products.id')
-            ->select('variants.*', 'products.product_name');
-
-        if ($selectedProductId) {
-            $variantsQuery->where('products.id', $selectedProductId);
-        }
-
-        $variants = $variantsQuery->get();
+        $variants = Variant::with('product')
+            ->when($selectedProductId, fn($query) => $query->where('products_id', $selectedProductId))
+            ->get();
 
         return view('admin.products.ListVariant', [
             'title' => 'List Variant',
@@ -185,5 +170,64 @@ class AdminPagesController extends Controller
             'selectedProductId' => $selectedProductId
         ]);
     }
-}
 
+    public function showAddVariantAttributeForm()
+    {
+        $variants = Variant::with('product')->get();
+        return view('admin.products.VariantAttribute', [
+            'title' => 'Add Variant Attribute',
+            'variants' => $variants
+        ]);
+    }
+
+    public function addVariantAttribute(Request $request)
+    {
+        $validated = $request->validate([
+            'variant_id' => 'required|exists:variants,id',
+            'attribute_name' => 'required|string|max:255',
+            'attribute_detail' => 'required|string|max:255',
+        ]);
+
+        // Cek apakah attribute_name sudah ada untuk variant ini
+        $exists = VariantAttribute::where('variant_id', $validated['variant_id'])
+            ->where('attribute_name', $validated['attribute_name'])
+            ->exists();
+
+        if ($exists) {
+            return back()->withInput()->with('error', 'Attribute name already exists for this variant.');
+        }
+
+        try {
+            VariantAttribute::create([
+                'variant_id' => $validated['variant_id'],
+                'attribute_name' => $validated['attribute_name'],
+                'attribute_detail' => $validated['attribute_detail'],
+            ]);
+
+            return redirect()->route('addVariantAttribute')->with('success', 'Variant attribute successfully added!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'An error occurred: ' . $e->getMessage());
+        }
+    }
+
+    public function displayListVariantAttribute(Request $request)
+    {
+        $variants = Variant::with('product')->get();
+        $selectedVariantId = $request->input('variant_id');
+
+        $attributesQuery = VariantAttribute::with(['variant.product']);
+
+        if ($selectedVariantId) {
+            $attributesQuery->where('variant_id', $selectedVariantId);
+        }
+
+        $attributes = $attributesQuery->get();
+
+        return view('admin.products.ListVariantAttribute', [
+            'title' => 'List Variant Attribute',
+            'variants' => $variants,
+            'attributes' => $attributes,
+            'selectedVariantId' => $selectedVariantId
+        ]);
+    }
+}
