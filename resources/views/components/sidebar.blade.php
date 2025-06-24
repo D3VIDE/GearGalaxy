@@ -66,7 +66,7 @@
                             d="M2.25 2.25a.75.75 0 0 0 0 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 0 0-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 0 0 0-1.5H5.378A2.25 2.25 0 0 1 7.5 15h11.218a.75.75 0 0 0 .674-.421 60.358 60.358 0 0 0 2.96-7.228.75.75 0 0 0-.525-.965A60.864 60.864 0 0 0 5.68 4.509l-.232-.867A1.875 1.875 0 0 0 3.636 2.25H2.25ZM3.75 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM16.5 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" />
                     </svg>
 
-                    PRODUK
+                    PRODUCT
                 </div>
 
                 <!-- Add Product -->
@@ -92,45 +92,72 @@
             </div>
 
             <div class="mt-2">
-            <div
-                class="px-5 py-2 mx-3 text-slate-400 text-sm font-medium uppercase tracking-wider flex items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" />
-                </svg>
-                VARIAN
+                <div
+                    class="px-5 py-2 mx-3 text-slate-400 text-sm font-medium uppercase tracking-wider flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" />
+                    </svg>
+                    VARIANT
+                </div>
+
+                <a href="{{ route('addVariant') }}"
+                    class="px-8 py-2 mx-3 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-blue-500 font-medium flex items-center gap-3 cursor-pointer transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="currentColor"
+                        class="bi bi-suit-diamond" viewBox="0 0 16 16">
+                        <path
+                            d="M8.384 1.226a.463.463 0 0 0-.768 0l-4.56 6.468a.54.54 0 0 0 0 .612l4.56 6.469a.463.463 0 0 0 .768 0l4.56-6.469a.54.54 0 0 0 0-.612zM6.848.613a1.39 1.39 0 0 1 2.304 0l4.56 6.468a1.61 1.61 0 0 1 0 1.838l-4.56 6.468a1.39 1.39 0 0 1-2.304 0L2.288 8.92a1.61 1.61 0 0 1 0-1.838z" />
+                    </svg>
+                    <span class="text-sm">Add Variant</span>
+                </a>
+
+                <a href="{{ route('ListVariant') }}"
+                    class="px-8 py-2 mx-3 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-blue-500 font-medium flex items-center gap-3 cursor-pointer transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="currentColor"
+                        class="bi bi-suit-diamond" viewBox="0 0 16 16">
+                        <path
+                            d="M8.384 1.226a.463.463 0 0 0-.768 0l-4.56 6.468a.54.54 0 0 0 0 .612l4.56 6.469a.463.463 0 0 0 .768 0l4.56-6.469a.54.54 0 0 0 0-.612zM6.848.613a1.39 1.39 0 0 1 2.304 0l4.56 6.468a1.61 1.61 0 0 1 0 1.838l-4.56 6.468a1.39 1.39 0 0 1-2.304 0L2.288 8.92a1.61 1.61 0 0 1 0-1.838z" />
+                    </svg>
+                    <span class="text-sm">List Variant</span>
+                </a>
             </div>
 
-            <a href="{{ route('addVariant') }}"
-                class="px-8 py-2 mx-3 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-blue-500 font-medium flex items-center gap-3 cursor-pointer transition-all">
-                <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="currentColor"
-                    class="bi bi-suit-diamond" viewBox="0 0 16 16">
-                    <path
-                        d="M8.384 1.226a.463.463 0 0 0-.768 0l-4.56 6.468a.54.54 0 0 0 0 .612l4.56 6.469a.463.463 0 0 0 .768 0l4.56-6.469a.54.54 0 0 0 0-.612zM6.848.613a1.39 1.39 0 0 1 2.304 0l4.56 6.468a1.61 1.61 0 0 1 0 1.838l-4.56 6.468a1.39 1.39 0 0 1-2.304 0L2.288 8.92a1.61 1.61 0 0 1 0-1.838z" />
-                </svg>
-                <span class="text-sm">Add Variant</span>
-            </a>
+            <!-- Variant Attribute Group -->
+            <div class="mt-2">
+                <!-- Group Header -->
+                <div class="px-5 py-2 mx-3 text-slate-400 text-sm font-medium uppercase tracking-wider flex items-center gap-3">
+                    <!-- Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M6.75 3v2.25M17.25 3v2.25M3 9h18M4.5 21h15a1.5 1.5 0 0 0 1.5-1.5v-11.25a1.5 1.5 0 0 0-1.5-1.5h-15A1.5 1.5 0 0 0 3 8.25V19.5A1.5 1.5 0 0 0 4.5 21Z" />
+                    </svg>
+                    VARIANT ATTRIBUTE
+                </div>
 
-            <a href="{{ route('ListVariant') }}"
-                class="px-8 py-2 mx-3 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-blue-500 font-medium flex items-center gap-3 cursor-pointer transition-all">
-                <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="currentColor"
-                    class="bi bi-suit-diamond" viewBox="0 0 16 16">
-                    <path
-                        d="M8.384 1.226a.463.463 0 0 0-.768 0l-4.56 6.468a.54.54 0 0 0 0 .612l4.56 6.469a.463.463 0 0 0 .768 0l4.56-6.469a.54.54 0 0 0 0-.612zM6.848.613a1.39 1.39 0 0 1 2.304 0l4.56 6.468a1.61 1.61 0 0 1 0 1.838l-4.56 6.468a1.39 1.39 0 0 1-2.304 0L2.288 8.92a1.61 1.61 0 0 1 0-1.838z" />
-                </svg>
-                <span class="text-sm">List Variant</span>
-            </a>
+                <!-- Add Variant Attribute -->
+                <a href="{{ route('addVariantAttribute') }}"
+                    class="px-8 py-2 mx-3 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-blue-500 font-medium flex items-center gap-3 cursor-pointer transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="currentColor"
+                        class="bi bi-suit-diamond" viewBox="0 0 16 16">
+                        <path
+                            d="M8.384 1.226a.463.463 0 0 0-.768 0l-4.56 6.468a.54.54 0 0 0 0 .612l4.56 6.469a.463.463 0 0 0 .768 0l4.56-6.469a.54.54 0 0 0 0-.612zM6.848.613a1.39 1.39 0 0 1 2.304 0l4.56 6.468a1.61 1.61 0 0 1 0 1.838l-4.56 6.468a1.39 1.39 0 0 1-2.304 0L2.288 8.92a1.61 1.61 0 0 1 0-1.838z" />
+                    </svg>
+                    <span class="text-sm">Add Variant Attribute</span>
+                </a>
 
-            <div
-                class="px-5 py-3 mx-3 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-slate-200 font-medium flex items-center gap-3 cursor-pointer transition-all">
-                <span>Atribut Varian</span>
+                <!-- List Variant Attribute -->
+                <a href="{{ route('listVariantAttribute') }}"
+                    class="px-8 py-2 mx-3 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-blue-500 font-medium flex items-center gap-3 cursor-pointer transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="currentColor"
+                        class="bi bi-suit-diamond" viewBox="0 0 16 16">
+                        <path
+                            d="M8.384 1.226a.463.463 0 0 0-.768 0l-4.56 6.468a.54.54 0 0 0 0 .612l4.56 6.469a.463.463 0 0 0 .768 0l4.56-6.469a.54.54 0 0 0 0-.612zM6.848.613a1.39 1.39 0 0 1 2.304 0l4.56 6.468a1.61 1.61 0 0 1 0 1.838l-4.56 6.468a1.39 1.39 0 0 1-2.304 0L2.288 8.92a1.61 1.61 0 0 1 0-1.838z" />
+                    </svg>
+                    <span class="text-sm">List Variant Attribute</span>
+                </a>
             </div>
 
-            <div
-                class="px-5 py-3 mx-3 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-slate-200 font-medium flex items-center gap-3 cursor-pointer transition-all">
-                <span>Laporan penjualan</span>
-            </div>
-        </div>
         <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit"
