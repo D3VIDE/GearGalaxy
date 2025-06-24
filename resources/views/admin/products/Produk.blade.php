@@ -2,8 +2,6 @@
 
 @section('content')
     <div class="flex-1 ml-64 p-6 min-h-screen content-center">
-
-
         <div class="p-6 bg-white rounded-lg shadow">
             <!-- Header -->
             <div class="flex justify-between items-center mb-6">

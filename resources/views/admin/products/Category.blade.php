@@ -5,7 +5,7 @@
         <div class="p-6 bg-white rounded-lg shadow">
             <!-- Header -->
             <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-bold text-gray-800">Add Category</h1>
+                <h1 class="text-2xl font-bold text-gray-800">ADD CATEGORY</h1>
             </div>
             @if ($errors->any())
                 <div class="mb-4 p-3 bg-red-100 text-red-700 rounded">
@@ -47,7 +47,7 @@
                 </div>
                 <div class="flex justify-end mt-6">
                     <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Add Kategori
+                        Add Category
                     </button>
                 </div>
             </form>

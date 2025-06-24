@@ -5,9 +5,8 @@
     <div class="p-6 bg-white rounded-lg shadow">
         <!-- Header -->
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">Add Variant</h1>
+            <h1 class="text-2xl font-bold text-gray-800">ADD VARIANT</h1>
         </div>
-
         @if ($errors->any())
             <div class="mb-4 p-3 bg-red-100 text-red-700 rounded">
                 <ul class="list-disc list-inside">
@@ -47,6 +46,16 @@
                                 <option value="{{ $product->id }}">{{ $product->product_name }}</option>
                             @endforeach
                         </select>
+                    </div>
+
+                    <!-- Variant Name -->
+                    <div class="mb-6">
+                        <label for="variant_name" class="block text-sm font-medium text-gray-700 mb-1">
+                            Variant Name <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="variant_name" name="variant_name"
+                            class="w-1/2 px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Enter variant name" required>
                     </div>
 
                     <!-- Price -->

@@ -91,11 +91,6 @@
                 </a>
             </div>
 
-            <div
-                class="px-5 py-3 mx-3 rounded-lg text-slate-400 hover:bg-slate-700 hover:text-slate-200 font-medium flex items-center gap-3 cursor-pointer transition-all">
-                <span>Kategori Produk</span>
-            </div>
-
             <div class="mt-2">
             <div
                 class="px-5 py-2 mx-3 text-slate-400 text-sm font-medium uppercase tracking-wider flex items-center gap-3">

@@ -24,32 +24,56 @@ class AdminPagesController extends Controller
             'categories' => $categories
         ]);
     }
-    public function addProduk(Request $request){
-        $validated =  $request->validate([
-        'product_name' => 'required|string|max:100',
-        'category_id' => 'required|exists:categories,id',
-        'product_description' => 'required|string'
-    ]);
-        try{
+    public function addProduk(Request $request)
+    {
+        $validated = $request->validate([
+            'product_name' => 'required|string|max:100',
+            'category_id' => 'required|exists:categories,id',
+            'product_description' => 'required|string'
+        ]);
+
+        // Check for duplicate product in the same category
+        $exists = Product::where('product_name', $validated['product_name'])
+            ->where('category_id', $validated['category_id'])
+            ->exists();
+
+        if ($exists) {
+            return back()->withInput()->with('error', 'A product with the same name already exists in this category.');
+        }
+
+        try {
             Product::create([
                 'product_name' => $validated['product_name'],
                 'category_id' => $validated['category_id'],
                 'product_description' => $validated['product_description']
             ]);
-            return redirect()->route('addProduk')->with('success', 'Produk berhasil ditambahkan!');
-        }catch(\Exception $e){
-             return back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+
+            return redirect()->route('addProduk')->with('success', 'Product successfully added!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
 
+
     // Untuk List Produk
-    public function displayListProduct()
+    public function displayListProduct(Request $request)
     {
-        $products = Product::with('category')->get(); // Hapus orderBy('created_at')
-        
+        $categories = DB::table('categories')->get(); // ambil semua kategori
+        $selectedCategoryId = $request->input('category_id');
+
+        $query = Product::with('category');
+
+        if ($selectedCategoryId) {
+            $query->where('category_id', $selectedCategoryId);
+        }
+
+        $products = $query->get();
+
         return view('admin.products.ListProduk', [
             'title' => 'List Produk',
-            'products' => $products
+            'products' => $products,
+            'categories' => $categories,
+            'selectedCategoryId' => $selectedCategoryId
         ]);
     }
 
@@ -64,22 +88,23 @@ class AdminPagesController extends Controller
         ]);
     }
 
-public function addCategory(Request $request)
-{
-    $request->validate([
-        'category_name' => 'required|string|max:50|unique:categories,category_name',
-    ]);
-
-    try {
-        Category::create([
-            'category_name' => $request->category_name,
+    public function addCategory(Request $request)
+    {
+        $request->validate([
+            'category_name' => 'required|string|max:50|unique:categories,category_name',
         ]);
 
-        return redirect()->route('category')->with('success', 'Kategori berhasil ditambahkan!');
-    } catch (\Exception $e) {
-        return back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        try {
+            Category::create([
+                'category_name' => $request->category_name,
+            ]);
+
+            return redirect()->route('category')->with('success', 'Category successfully added!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'An error occurred: ' . $e->getMessage());
+        }
     }
-}
+
     public function displayCategoryForm(){
         return view('admin.products.category',[
             'title' => 'Add Category'
@@ -95,13 +120,25 @@ public function addCategory(Request $request)
         ]);
     }
 
-    public function addVariant(Request $request){
+    public function addVariant(Request $request)
+    {
         $validated = $request->validate([
             'products_id' => 'required|exists:products,id',
+            'variant_name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
+
+        // Check for duplicate variant in the same product
+        $exists = DB::table('variants')
+            ->where('products_id', $validated['products_id'])
+            ->where('variant_name', $validated['variant_name'])
+            ->exists();
+
+        if ($exists) {
+            return back()->withInput()->with('error', 'A variant with the same name already exists for this product.');
+        }
 
         try {
             $imagePath = null;
@@ -109,9 +146,9 @@ public function addCategory(Request $request)
                 $imagePath = $request->file('image')->store('variants', 'public');
             }
 
-            // Gunakan DB facade untuk langsung insert ke tabel variants
             DB::table('variants')->insert([
                 'products_id' => $validated['products_id'],
+                'variant_name' => $validated['variant_name'],
                 'price' => $validated['price'],
                 'stock' => $validated['stock'],
                 'image' => $imagePath,
@@ -119,21 +156,33 @@ public function addCategory(Request $request)
                 'updated_at' => now(),
             ]);
 
-            return redirect()->route('addVariant')->with('success', 'Variant berhasil ditambahkan!');
+            return redirect()->route('addVariant')->with('success', 'Variant successfully added!');
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
 
-    public function displayListVariant(){
-        $variants = DB::table('variants')
+
+    public function displayListVariant(Request $request)
+    {
+        $products = DB::table('products')->get();
+        $selectedProductId = $request->input('product_id');
+
+        $variantsQuery = DB::table('variants')
             ->join('products', 'variants.products_id', '=', 'products.id')
-            ->select('variants.*', 'products.product_name')
-            ->get();
-            
+            ->select('variants.*', 'products.product_name');
+
+        if ($selectedProductId) {
+            $variantsQuery->where('products.id', $selectedProductId);
+        }
+
+        $variants = $variantsQuery->get();
+
         return view('admin.products.ListVariant', [
             'title' => 'List Variant',
-            'variants' => $variants
+            'variants' => $variants,
+            'products' => $products,
+            'selectedProductId' => $selectedProductId
         ]);
     }
 }
