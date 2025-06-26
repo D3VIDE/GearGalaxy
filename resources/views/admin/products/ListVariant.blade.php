@@ -34,8 +34,6 @@
             </div>
         </div>
 
-
-
         @if (session('success'))
             <div class="mb-4 p-3 bg-green-100 text-green-700 rounded">
                 {{ session('success') }}
@@ -96,8 +94,30 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <a href="#" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
-                            <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Are you sure?')">Delete</button>
+                            <div class="flex justify-center space-x-2">
+                                <a href="{{ route('editVariant', $variant->id) }}" 
+                                   class="text-green-600 hover:text-green-900 inline-flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                    </svg>
+                                    <span class="ml-1">Edit</span>
+                                </a>
+                                
+                                <form id="delete-variant-form-{{ $variant->id }}" 
+                                      action="{{ route('deleteVariant', $variant->id) }}" 
+                                      method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button"
+                                            onclick="confirmVariantDelete({{ $variant->id }})"
+                                            class="text-red-600 hover:text-red-900 inline-flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                        </svg>
+                                        <span class="ml-1">Delete</span>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @empty
@@ -108,9 +128,29 @@
                     </tr>
                     @endforelse
                 </tbody>
-
             </table>
         </div>
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+function confirmVariantDelete(id) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "Variant will be deleted permanently!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('delete-variant-form-' + id).submit();
+        }
+    });
+}
+</script>
+@endpush

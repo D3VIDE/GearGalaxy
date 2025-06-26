@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\{Category, Product, Variant, VariantAttribute};
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class AdminPagesController extends Controller
 {
@@ -73,6 +74,39 @@ class AdminPagesController extends Controller
             'selectedCategoryId' => $selectedCategoryId
         ]);
     }
+    public function edit_product($id)
+    {
+        $product = Product::findOrFail($id);
+        $categories = Category::all();
+
+        return view('admin.products.edit-product', [
+            'product' => $product,
+            'categories' => $categories,
+            'title' => 'Edit Produk'  // Menambahkan title
+        ]);
+    }
+
+    public function update_product(Request $request, $id)
+    {
+        $request->validate([
+            'product_name' => 'required|string|max:255',
+            'product_description' => 'required|string',
+            'category_id' => 'required|exists:categories,id'
+        ]);
+
+        $product = Product::findOrFail($id);
+        $product->update($request->all());
+
+        return redirect()->route('ListProduk')->with('success', 'Produk berhasil diupdate');
+    }
+
+    public function destroy_product($id)
+    {
+        $product = Product::findOrFail($id);
+        $product->delete();
+
+        return redirect()->route('ListProduk')->with('success', 'Produk berhasil dihapus');
+    }
 
     public function displayListCategory()
     {
@@ -83,6 +117,34 @@ class AdminPagesController extends Controller
         ]);
     }
 
+    public function editCategory($id)
+    {
+        $category = Category::findOrFail($id);
+        return view('admin.products.edit-category', [
+            'category' => $category,
+            'title' => 'Edit Category'
+        ]);
+    }
+
+    public function updateCategory(Request $request, $id)
+    {
+        $request->validate([
+            'category_name' => 'required|string|max:255|unique:categories,category_name,' . $id
+        ]);
+
+        $category = Category::findOrFail($id);
+        $category->update($request->all());
+
+        return redirect()->route('ListCategory')->with('success', 'Kategori berhasil diupdate');
+    }
+
+    public function deleteCategory($id)
+    {
+        $category = Category::findOrFail($id);
+        $category->delete();
+
+        return redirect()->route('ListCategory')->with('success', 'Kategori berhasil dihapus');
+    }
     public function addCategory(Request $request)
     {
         $request->validate([
@@ -115,7 +177,54 @@ class AdminPagesController extends Controller
             'products' => $products
         ]);
     }
+    public function editVariant($id)
+    {
+        $variant = Variant::findOrFail($id);
+        return view('admin.products.edit-variant', [
+            'variant' => $variant,
+            'title' => 'Edit Variant'
+        ]);
+    }
 
+    public function updateVariant(Request $request, $id)
+    {
+        $request->validate([
+            'variant_name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        $variant = Variant::findOrFail($id);
+
+        $data = $request->except('image');
+
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($variant->image) {
+                Storage::delete($variant->image);
+            }
+            $data['image'] = $request->file('image')->store('variant_images');
+        }
+
+        $variant->update($data);
+
+        return redirect()->route('ListVariant')->with('success', 'Variant updated successfully');
+    }
+
+    public function deleteVariant($id)
+    {
+        $variant = Variant::findOrFail($id);
+
+        // Delete image if exists
+        if ($variant->image) {
+            Storage::delete($variant->image);
+        }
+
+        $variant->delete();
+
+        return redirect()->route('ListVariant')->with('success', 'Variant deleted successfully');
+    }
     public function addVariant(Request $request)
     {
         $validated = $request->validate([
@@ -229,5 +338,37 @@ class AdminPagesController extends Controller
             'attributes' => $attributes,
             'selectedVariantId' => $selectedVariantId
         ]);
+    }
+    public function editVariantAttribute($id)
+    {
+        $attribute = VariantAttribute::findOrFail($id);
+        $variants = Variant::with('product')->get();
+        return view('admin.products.edit-attribute',[
+            'attribute' => $attribute, 
+            'variants' => $variants,
+            'title' => 'Edit Variant Attribute'
+        ]);
+    }
+
+    public function updateVariantAttribute(Request $request, $id)
+    {
+        $request->validate([
+            'variant_id' => 'required|exists:variants,id',
+            'attribute_name' => 'required|string|max:255',
+            'attribute_detail' => 'nullable|string|max:255'
+        ]);
+
+        $attribute = VariantAttribute::findOrFail($id);
+        $attribute->update($request->all());
+
+        return redirect()->route('listVariantAttribute')->with('success', 'Attribute updated successfully');
+    }
+
+    public function deleteVariantAttribute($id)
+    {
+        $attribute = VariantAttribute::findOrFail($id);
+        $attribute->delete();
+
+        return redirect()->route('listVariantAttribute')->with('success', 'Attribute deleted successfully');
     }
 }
