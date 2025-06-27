@@ -52,63 +52,65 @@
 
             {{-- Form Pembelian --}}
             <div class="lg:col-span-3">
-                @if($variant->stock > 0)
-                    <form action="{{ route('cart.add', $variant->product->id) }}" method="POST" class="space-y-3">
-                        @csrf
-                        <input type="hidden" name="variant_id" value="{{ $variant->id }}">
-                        <div class="border rounded-lg p-4 shadow-sm">
-                            <div class="space-y-4">
-                                <label class="block font-bold text-gray-700">Atur jumlah pembelian</label>
+                 <form action="{{ route('cart.add', $variant->product->id) }}" method="POST" class="space-y-3">
+                    @csrf
+                    <input type="hidden" name="variant_id" value="{{ $variant->id }}">
+                    <div class="border rounded-lg p-4 shadow-sm">
+                        
 
-                                <div class="flex items-center gap-2">
-                                    <button type="button" onclick="changeQty(-1)"
-                                        class="px-2 py-1 rounded border text-sm hover:bg-gray-100">−</button>
+                        <div class="space-y-4">
+                            <label class="block font-bold text-gray-700">Atur jumlah pembelian</label>
 
-                                    <input type="number" id="qty" name="quantity"
-                                        value="1" min="1" max="{{ $variant->stock }}"
-                                        class="w-16 text-center border rounded text-sm py-1" onchange="updateSubtotal()" />
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="changeQty(-1)"
+                                    class="px-2 py-1 rounded border text-sm hover:bg-gray-100">−</button>
 
-                                    <button type="button" onclick="changeQty(1)"
-                                        class="px-2 py-1 rounded border text-sm hover:bg-gray-100">+</button>
-                                    <span class="text-sm text-gray-600">
-                                        Stok: <span class="font-bold">{{ $variant->stock }}</span>
-                                    </span>
-                                </div>
-
-                                <div class="mt-2 flex justify-between items-center">
-                                    <span class="font-medium">Subtotal</span>
-                                    <span class="font-bold text-indigo-700 text-lg" id="subtotal">
-                                        Rp{{ number_format($variant->price, 0, ',', '.') }}
-                                    </span>
-                                </div>
+                                <input type="number" id="qty" name="quantity"
+                                    value="{{ $variant->stock > 0 ? 1 : 0 }}"
+                                    min="0" max="{{ $variant->stock }}"
+                                    class="w-16 text-center border rounded text-sm py-1"
+                                    onchange="updateSubtotal()"
+                                    {{ $variant->stock == 0 ? 'disabled' : '' }} />
+                                <button type="button" onclick="changeQty(1)"
+                                    class="px-2 py-1 rounded border text-sm hover:bg-gray-100">+</button>
+                                <span class="text-sm text-gray-600">
+                                    Stok: <span class="font-bold">{{ $variant->stock }}</span>
+                                </span>
                             </div>
 
-                            <div class="mt-4 space-y-2">
-                                <button type="submit"
-                                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 text-sm rounded">
-                                    + Keranjang
-                                </button>
+                            <div class="flex justify-between items-center mt-2  text-gray-700">
+                                <span class="font-medium">Subtotal</span>
+                                <span class="font-bold text-indigo-700 text-lg" id="subtotal">
+                                    Rp{{ $variant->stock > 0 ? number_format($variant->price, 0, ',', '.') : '0' }}
+                                </span>
                             </div>
                         </div>
-                    </form>
-                @else
-                    <div class="border rounded-lg p-4 shadow-sm">
-                        <button type="button"
-                            class="w-full bg-gray-300 text-gray-500 py-2 px-4 text-sm rounded cursor-not-allowed" disabled>
-                            Stok Habis
-                        </button>
+                       
+                        <div class="mt-4 space-y-2">
+                            @if($variant->stock > 0)
+
+                           <button type="submit"Add commentMore actions
+                                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 text-sm rounded">
+                                    + Keranjang
+                            </button>
+                                
+                            @else
+                                <button type="button"Add commentMore actions
+                                    class="w-full bg-gray-300 text-gray-500 py-2 px-4 text-sm rounded cursor-not-allowed" disabled>
+                                    Stok Habis
+                                </button>
+                            @endif
+                        </div>
                     </div>
-                @endif
+                </form>
             </div>
-
         </div>
-
     </div>
 </div>
 
+
 {{-- Script for dynamic subtotal --}}
 <script>
-    // Gunakan harga langsung dari variant
     const price = {{ $variant->price }};
     const maxStock = {{ $variant->stock }};
 
@@ -125,11 +127,19 @@
     }
 
     function updateSubtotal() {
-        const qty = parseInt(document.getElementById('qty').value);
-        const subtotal = price * qty;
+        const qtyInput = document.getElementById('qty');
+        const qty = parseInt(qtyInput.value) || 0;
+
+        const subtotal = (maxStock === 0) ? 0 : price * qty;
         document.getElementById('subtotal').innerText = 'Rp' + subtotal.toLocaleString('id-ID');
     }
+
+    // Inisialisasi saat load
+    document.addEventListener('DOMContentLoaded', () => {
+        updateSubtotal();
+    });
 </script>
+
 
 @if(session('error'))
 <script>
