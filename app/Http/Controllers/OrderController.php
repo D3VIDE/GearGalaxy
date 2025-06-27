@@ -10,13 +10,14 @@ class OrderController extends Controller
 {
     public function index()
 {
-    $orders = Order::with(['items.product'])
+    $orders = Order::with('items.variant') // ambil data dari variants
                    ->where('user_id', Auth::id())
                    ->orderBy('created_at', 'desc')
                    ->get();
 
-    $title = "Order";
-
-    return view('orders.index', compact('orders', 'title'));
+    return view('orders.index', [
+        'orders' => $orders,
+        'title' => 'Order',
+    ]);
 }
 }
