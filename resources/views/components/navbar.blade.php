@@ -115,11 +115,13 @@
                     <button class="text-gray-700 focus:outline-none search-button">
                         <i class="fas fa-search text-xl"></i>
                     </button>
-                    <a href="/cart" class="text-gray-700 relative">
-                        <i class="fas fa-shopping-cart text-xl"></i>
+                    @php $cartCount = (new App\Http\Controllers\CartController())->getCartCount(); @endphp
+                    @if ($cartCount > 0)
                         <span
-                            class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
-                    </a>
+                            class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center cart-count">
+                            {{ $cartCount }}
+                        </span>
+                    @endif
                 </div>
             </div>
 
@@ -201,7 +203,7 @@
                             throw new Error('Network response was not ok');
                         }
                         return response
-                    .text(); 
+                            .text();
                     })
                     .then(count => {
                         document.querySelectorAll('.cart-count').forEach(el => {
