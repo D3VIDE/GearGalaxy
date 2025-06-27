@@ -3,12 +3,17 @@
 @section('content')
 <div class="flex-1 ml-64 p-6 min-h-screen content-center">
     <div class="p-6 bg-white rounded-lg shadow">
-        <!-- Header & Filter -->
+        <!-- Header & Search -->
         <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
             <h1 class="text-2xl font-bold text-gray-800">LIST VARIANT ATTRIBUTE</h1>
-
             <div class="flex items-center space-x-4">
-                <!-- Filter Form -->
+                <div class="relative">
+                    <input type="text" id="attributeSearch" placeholder="Search attributes..." 
+                           class="w-64 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                    <svg class="absolute right-3 top-3 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
                 <form method="GET" action="{{ route('listVariantAttribute') }}" class="flex items-center space-x-3">
                     <label for="variant_id" class="text-sm font-medium text-gray-700">Variant:</label>
                     <select name="variant_id" id="variant_id"
@@ -25,8 +30,6 @@
                         Filter
                     </button>
                 </form>
-
-                <!-- Add Attribute Button -->
                 <a href="{{ route('addVariantAttribute') }}"
                     class="px-5 py-2 bg-green-600 text-white rounded text-sm hover:bg-green-700 font-semibold">
                     Add New Attribute
@@ -35,31 +38,15 @@
         </div>
 
         @if (session('success'))
-            @push('scripts')
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-            <script>
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: '{{ session('success') }}',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-            </script>
-            @endpush
+            <div class="mb-4 p-3 bg-green-100 text-green-700 rounded">
+                {{ session('success') }}
+            </div>
         @endif
 
         @if (session('error'))
-            @push('scripts')
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-            <script>
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: '{{ session('error') }}'
-                });
-            </script>
-            @endpush
+            <div class="mb-4 p-3 bg-red-100 text-red-700 rounded">
+                {{ session('error') }}
+            </div>
         @endif
 
         <!-- Table -->
@@ -74,17 +61,20 @@
                         <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Action</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody class="bg-white divide-y divide-gray-200" id="attributeTableBody">
                     @forelse ($attributes as $attribute)
-                        <tr>
+                        <tr class="attribute-row">
                             <td class="px-6 py-4 text-sm text-gray-500">{{ $loop->iteration }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-900">
+                            <td class="px-6 py-4 text-sm text-gray-900 variant-info">
                                 {{ $attribute->variant->product->product_name }} - {{ $attribute->variant->variant_name }}
                             </td>
-                            <td class="px-6 py-4 text-sm text-gray-900">{{ $attribute->attribute_name }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-900">{{ $attribute->attribute_detail ?? '-' }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-900 attribute-name">
+                                {{ $attribute->attribute_name }}
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-900 attribute-detail">
+                                {{ $attribute->attribute_detail ?? '-' }}
+                            </td>
                             <td class="px-6 py-4 text-sm font-medium">
-                                <!-- Edit Button -->
                                 <a href="{{ route('editVariantAttribute', $attribute->id) }}" 
                                    class="text-green-600 hover:text-green-900 mr-3 inline-flex items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -92,8 +82,6 @@
                                     </svg>
                                     <span class="ml-1">Edit</span>
                                 </a>
-                                
-                                <!-- Delete Button -->
                                 <form id="delete-attribute-form-{{ $attribute->id }}" 
                                       action="{{ route('deleteVariantAttribute', $attribute->id) }}" 
                                       method="POST" 
@@ -125,7 +113,6 @@
 </div>
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 function confirmAttributeDelete(id) {
     Swal.fire({
@@ -143,6 +130,29 @@ function confirmAttributeDelete(id) {
         }
     });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('attributeSearch');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#attributeTableBody tr.attribute-row');
+            
+            rows.forEach(row => {
+                const variantInfo = row.querySelector('.variant-info').textContent.toLowerCase();
+                const attrName = row.querySelector('.attribute-name').textContent.toLowerCase();
+                const attrDetail = row.querySelector('.attribute-detail').textContent.toLowerCase();
+                
+                if (variantInfo.includes(searchTerm) || attrName.includes(searchTerm) || attrDetail.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    }
+});
 </script>
 @endpush
 @endsection
