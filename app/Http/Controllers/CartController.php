@@ -127,19 +127,17 @@ class CartController extends Controller
         session()->put('cart', array_values($cart));
         return redirect()->route('cart')->with('success', 'Produk dihapus dari keranjang!');
     }
-
     public function getCartCount()
     {
         $cart = session()->get('cart', []);
         $count = 0;
-        
+
         foreach ($cart as $item) {
             $count += $item['quantity'];
         }
-        
-        return $count;
-    }
 
+        return $count; 
+    }
     public function showCheckout()
     {
         $cartItems = session()->get('cart', []);
@@ -264,5 +262,10 @@ class CartController extends Controller
             'order' => $order
         ]);
     }
-    
+
+    public function calculateCartCount()
+{
+    $cart = session()->get('cart', []);
+    return array_sum(array_column($cart, 'quantity'));
+}
 }
