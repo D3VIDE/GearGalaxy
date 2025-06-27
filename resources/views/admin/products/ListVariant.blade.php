@@ -3,12 +3,17 @@
 @section('content')
 <div class="flex-1 ml-64 p-6 min-h-screen content-center">
     <div class="p-6 bg-white rounded-lg shadow">
-        <!-- Header & Filter -->
+        <!-- Header & Search -->
         <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
             <h1 class="text-2xl font-bold text-gray-800">LIST VARIANT</h1>
-
             <div class="flex items-center space-x-4">
-                <!-- Filter Form -->
+                <div class="relative">
+                    <input type="text" id="variantSearch" placeholder="Search variants..." 
+                           class="w-64 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                    <svg class="absolute right-3 top-3 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
                 <form method="GET" action="{{ route('ListVariant') }}" class="flex items-center space-x-3">
                     <label for="product_id" class="text-sm font-medium text-gray-700">Product:</label>
                     <select name="product_id" id="product_id"
@@ -25,8 +30,6 @@
                         Filter
                     </button>
                 </form>
-
-                <!-- Add Variant Button -->
                 <a href="{{ route('addVariant') }}"
                     class="px-5 py-2 bg-green-600 text-white rounded text-sm hover:bg-green-700 font-semibold">
                     Add New Variant
@@ -51,39 +54,25 @@
             <table class="min-w-full divide-y divide-gray-200 text-center">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            #
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Variant Name
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Price
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Stock
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Image
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Action
-                        </th>
+                        <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                        <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Variant Name</th>
+                        <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                        <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+                        <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
+                        <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody class="bg-white divide-y divide-gray-200" id="variantTableBody">
                     @forelse($variants as $variant)
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $loop->iteration }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                    <tr class="variant-row">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $loop->iteration }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap variant-name">
                             <div class="text-sm font-medium text-gray-900">{{ $variant->variant_name ?? '-' }}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-6 py-4 whitespace-nowrap variant-price">
                             <div class="text-sm text-gray-900">Rp {{ number_format($variant->price, 0, ',', '.') }}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-6 py-4 whitespace-nowrap variant-stock">
                             <div class="text-sm text-gray-900">{{ $variant->stock }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
@@ -102,7 +91,6 @@
                                     </svg>
                                     <span class="ml-1">Edit</span>
                                 </a>
-                                
                                 <form id="delete-variant-form-{{ $variant->id }}" 
                                       action="{{ route('deleteVariant', $variant->id) }}" 
                                       method="POST" class="inline">
@@ -132,7 +120,6 @@
         </div>
     </div>
 </div>
-@endsection
 
 @push('scripts')
 <script>
@@ -152,5 +139,29 @@ function confirmVariantDelete(id) {
         }
     });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('variantSearch');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#variantTableBody tr.variant-row');
+            
+            rows.forEach(row => {
+                const name = row.querySelector('.variant-name').textContent.toLowerCase();
+                const price = row.querySelector('.variant-price').textContent.toLowerCase();
+                const stock = row.querySelector('.variant-stock').textContent.toLowerCase();
+                
+                if (name.includes(searchTerm) || price.includes(searchTerm) || stock.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    }
+});
 </script>
 @endpush
+@endsection
