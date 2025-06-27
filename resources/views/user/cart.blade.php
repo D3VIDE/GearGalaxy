@@ -29,7 +29,7 @@
             @foreach($products as $product)
             <div class="flex flex-col md:flex-row border-b border-gray-200 py-4">
                 <div class="flex items-start flex-1 mb-4 md:mb-0">
-                    <img src="{{ asset($product['image']) }}" alt="{{ $product['name'] }}" class="w-20 h-20 object-cover rounded mr-4">
+                    <img src="{{ asset('storage/' . $product['image']) }}" alt="{{ $product['name'] }}" class="w-20 h-20 object-cover rounded mr-4">
                     <div>
                         <h3 class="font-bold">{{ $product['name'] }}</h3>
                         <p class="text-gray-600 text-sm">{{ $product['variant_details'] ?? $product['variant_name'] }}</p>
