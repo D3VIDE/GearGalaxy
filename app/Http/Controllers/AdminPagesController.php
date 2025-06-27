@@ -28,27 +28,27 @@ class AdminPagesController extends Controller
         ->take(10)
         ->get();
 
-        // Grafik Harian (7 Hari Terakhir)
-        $dailySales = OrderItem::selectRaw("created_at::date as date, SUM(unit_price * amount) as total")
-            ->where('created_at', '>=', Carbon::now()->subDays(6))
+        // Penjualan Harian (7 hari terakhir)
+        $dailySales = OrderItem::selectRaw("TO_CHAR(created_at, 'YYYY-MM-DD') as date, SUM(unit_price * amount) as total")
+            ->where('created_at', '>=', Carbon::now()->subDays(6)->startOfDay())
             ->groupBy('date')
             ->orderBy('date')
             ->get();
 
-        // Grafik Bulanan (12 Bulan Terakhir)
+        // Penjualan Bulanan (12 bulan terakhir)
         $monthlySales = OrderItem::selectRaw("TO_CHAR(created_at, 'YYYY-MM') as month, SUM(unit_price * amount) as total")
             ->where('created_at', '>=', Carbon::now()->subMonths(11)->startOfMonth())
             ->groupBy('month')
             ->orderBy('month')
             ->get();
 
-        // Grafik Tahunan (5 Tahun Terakhir)
+        // Penjualan Tahunan (5 tahun terakhir)
         $yearlySales = OrderItem::selectRaw("TO_CHAR(created_at, 'YYYY') as year, SUM(unit_price * amount) as total")
             ->where('created_at', '>=', Carbon::now()->subYears(4)->startOfYear())
             ->groupBy('year')
             ->orderBy('year')
             ->get();
-            
+
         return view('admin.dashboard', compact(
             'title','totalProducts', 'totalVariants', 'totalCategories',
             'salesToday', 'lowStockVariants', 'dailySales','monthlySales','yearlySales'

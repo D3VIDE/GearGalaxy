@@ -30,22 +30,22 @@
     <!-- Grafik Penjualan -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
         <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h3 class="font-bold text-slate-800 mb-3">Harian (7 Hari)</h3>
-            <canvas id="dailyChart" height="120"></canvas>
+            <h3 class="text-lg font-bold text-slate-800 mb-5">Penjualan Harian</h3>
+            <canvas id="dailyChart" height="150"></canvas>
         </div>
         <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h3 class="font-bold text-slate-800 mb-3">Bulanan (12 Bulan)</h3>
-            <canvas id="monthlyChart" height="120"></canvas>
+            <h3 class="text-lg font-bold text-slate-800 mb-5">Penjualan Bulanan</h3>
+            <canvas id="monthlyChart" height="150"></canvas>
         </div>
         <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h3 class="font-bold text-slate-800 mb-3">Tahunan (5 Tahun)</h3>
-            <canvas id="yearlyChart" height="120"></canvas>
+            <h3 class="text-lg font-bold text-slate-800 mb-5">Penjualan Tahunan</h3>
+            <canvas id="yearlyChart" height="150"></canvas>
         </div>
     </div>
 
     <!-- Varian Perlu Restock -->
     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h3 class="text-lg font-bold text-slate-800 mb-4">Varian Perlu Restock</h3>
+        <h3 class="text-lg font-bold text-slate-800 mb-4">Varian Yang Perlu Direstock</h3>
         <div class="overflow-x-auto">
             <table class="w-full text-center">
                 <thead>
@@ -96,6 +96,9 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const dailyCtx = document.getElementById('dailyChart').getContext('2d');
+    const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+    const yearlyCtx = document.getElementById('yearlyChart').getContext('2d');
+
     const dailyChart = new Chart(dailyCtx, {
         type: 'line',
         data: {
@@ -103,19 +106,25 @@
             datasets: [{
                 label: 'Penjualan Harian',
                 data: @json($dailySales->pluck('total')),
+                backgroundColor: 'rgba(59, 130, 246, 0.2)',
                 borderColor: 'rgba(59, 130, 246, 1)',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                tension: 0.3,
+                borderWidth: 2,
+                tension: 0.4,
                 fill: true,
-                pointRadius: 3,
             }]
         },
         options: {
-            scales: { y: { beginAtZero: true } },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: value => 'Rp ' + new Intl.NumberFormat('id-ID').format(value)
+                    }
+                }
+            }
         }
     });
 
-    const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
     const monthlyChart = new Chart(monthlyCtx, {
         type: 'bar',
         data: {
@@ -123,16 +132,23 @@
             datasets: [{
                 label: 'Penjualan Bulanan',
                 data: @json($monthlySales->pluck('total')),
-                backgroundColor: 'rgba(16, 185, 129, 0.7)',
-                borderRadius: 5,
+                backgroundColor: 'rgba(16, 185, 129, 0.6)',
+                borderColor: 'rgba(5, 150, 105, 1)',
+                borderWidth: 1,
             }]
         },
         options: {
-            scales: { y: { beginAtZero: true } },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: value => 'Rp ' + new Intl.NumberFormat('id-ID').format(value)
+                    }
+                }
+            }
         }
     });
 
-    const yearlyCtx = document.getElementById('yearlyChart').getContext('2d');
     const yearlyChart = new Chart(yearlyCtx, {
         type: 'bar',
         data: {
@@ -140,12 +156,20 @@
             datasets: [{
                 label: 'Penjualan Tahunan',
                 data: @json($yearlySales->pluck('total')),
-                backgroundColor: 'rgba(245, 158, 11, 0.7)',
-                borderRadius: 5,
+                backgroundColor: 'rgba(234, 179, 8, 0.6)',
+                borderColor: 'rgba(202, 138, 4, 1)',
+                borderWidth: 1,
             }]
         },
         options: {
-            scales: { y: { beginAtZero: true } },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: value => 'Rp ' + new Intl.NumberFormat('id-ID').format(value)
+                    }
+                }
+            }
         }
     });
 </script>
