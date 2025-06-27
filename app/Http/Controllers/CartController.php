@@ -4,110 +4,255 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Variant;
+use App\Models\Order;
+use App\Models\OrderItem;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-    /**
-     * Display the shopping cart
-     */
     public function index()
     {
-        // For now we'll use session-based cart
         $cartItems = session()->get('cart', []);
         $products = [];
         $subtotal = 0;
 
-        // Get product details from database
-        foreach ($cartItems as $productId => $quantity) {
-            $product = Product::find($productId);
-            if ($product) {
+        foreach ($cartItems as $item) {
+            $variant = Variant::with(['product', 'attributes'])->find($item['variant_id']);
+            
+            if ($variant) {
                 $products[] = [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'price' => $product->price,
-                    'quantity' => $quantity,
-                    'image' => $product->image,
-                    'color' => $product->color,
-                    'size' => $product->size
+                    'product_id' => $variant->product->id,
+                    'variant_id' => $variant->id,
+                    'name' => $variant->product->product_name,
+                    'price' => $variant->price,
+                    'quantity' => $item['quantity'],
+                    'image' => $variant->image,
+                    'variant_name' => $variant->variant_name,
+                    'variant_details' => $variant->getVariantDetails()
                 ];
-                $subtotal += $product->price * $quantity;
+                $subtotal += $variant->price * $item['quantity'];
             }
         }
 
-        return view('cart', [
+        return view('user.cart', [
+            'title' => 'Keranjang Belanja',
             'products' => $products,
             'subtotal' => $subtotal,
-            'shipping' => 0, // Free shipping by default
-            'vat' => $subtotal * 0.1, // Assuming 10% VAT
-            'total' => $subtotal * 1.1 // Subtotal + VAT
+            'vat' => $subtotal * 0.1,
+            'total' => $subtotal * 1.1
         ]);
     }
 
-    /**
-     * Add item to cart
-     */
     public function add(Request $request, $productId)
     {
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Silakan login untuk menambahkan produk ke keranjang');
+        }
+
+        $request->validate([
+            'variant_id' => 'required|exists:variants,id',
+            'quantity' => 'required|numeric|min:1|max:100'
+        ]);
+
+        $product = Product::findOrFail($productId);
+        $variant = Variant::findOrFail($request->variant_id);
+
+        if ($variant->stock < $request->quantity) {
+            return redirect()->back()->with('error', 'Stok tidak mencukupi');
+        }
+
         $cart = session()->get('cart', []);
         
-        if (isset($cart[$productId])) {
-            $cart[$productId]++;
+        $existingKey = null;
+        foreach ($cart as $key => $item) {
+            if ($item['product_id'] == $productId && $item['variant_id'] == $request->variant_id) {
+                $existingKey = $key;
+                break;
+            }
+        }
+
+        if ($existingKey !== null) {
+            $newQuantity = $cart[$existingKey]['quantity'] + $request->quantity;
+            if ($variant->stock < $newQuantity) {
+                return redirect()->back()->with('error', 'Jumlah melebihi stok yang tersedia');
+            }
+            $cart[$existingKey]['quantity'] = $newQuantity;
         } else {
-            $cart[$productId] = 1;
+            $cart[] = [
+                'product_id' => $productId,
+                'variant_id' => $request->variant_id,
+                'quantity' => $request->quantity
+            ];
         }
 
         session()->put('cart', $cart);
-
-        return redirect()->back()->with('success', 'Product added to cart!');
+        return redirect()->back()->with('success', 'Produk berhasil ditambahkan ke keranjang!');
     }
 
-    /**
-     * Update cart item quantity
-     */
-    public function update(Request $request, $productId)
+    public function update(Request $request, $productId, $variantId)
     {
         $request->validate([
             'quantity' => 'required|numeric|min:1'
         ]);
 
         $cart = session()->get('cart', []);
+        $variant = Variant::findOrFail($variantId);
 
-        if (isset($cart[$productId])) {
-            $cart[$productId] = $request->quantity;
-            session()->put('cart', $cart);
+        foreach ($cart as $key => $item) {
+            if ($item['product_id'] == $productId && $item['variant_id'] == $variantId) {
+                if ($variant->stock < $request->quantity) {
+                    return redirect()->back()->with('error', 'Stok tidak mencukupi');
+                }
+                $cart[$key]['quantity'] = $request->quantity;
+                session()->put('cart', $cart);
+                break;
+            }
         }
 
-        return redirect()->route('cart')->with('success', 'Cart updated!');
+        return redirect()->route('cart')->with('success', 'Keranjang berhasil diperbarui!');
     }
 
-    /**
-     * Remove item from cart
-     */
-    public function remove($productId)
+    public function remove($productId, $variantId)
     {
         $cart = session()->get('cart', []);
 
-        if (isset($cart[$productId])) {
-            unset($cart[$productId]);
-            session()->put('cart', $cart);
+        foreach ($cart as $key => $item) {
+            if ($item['product_id'] == $productId && $item['variant_id'] == $variantId) {
+                unset($cart[$key]);
+                session()->put('cart', array_values($cart));
+                break;
+            }
         }
 
-        return redirect()->route('cart')->with('success', 'Product removed from cart!');
+        return redirect()->route('cart')->with('success', 'Produk berhasil dihapus dari keranjang!');
     }
 
-    /**
-     * Apply coupon code
-     */
-    public function applyCoupon(Request $request)
+    public function showCheckout()
+    {
+        $cartItems = session()->get('cart', []);
+        if (empty($cartItems)) {
+            return redirect()->route('cart')->with('error', 'Keranjang anda kosong!');
+        }
+
+        $subtotal = 0;
+        $products = [];
+        
+        foreach ($cartItems as $item) {
+            $variant = Variant::with(['product', 'attributes'])->find($item['variant_id']);
+            $product = $variant->product ?? null;
+            
+            if ($product && $variant) {
+                $price = $variant->price;
+                $products[] = [
+                    'product' => $product,
+                    'variant' => $variant,
+                    'quantity' => $item['quantity'],
+                    'price' => $price,
+                    'subtotal' => $price * $item['quantity']
+                ];
+                $subtotal += $price * $item['quantity'];
+            }
+        }
+
+        return view('user.checkout', [
+            'title' => 'Checkout',
+            'products' => $products,
+            'subtotal' => $subtotal,
+            'vat' => $subtotal * 0.1,
+            'total' => $subtotal * 1.1
+        ]);
+    }
+
+    public function checkout(Request $request)
     {
         $request->validate([
-            'coupon_code' => 'required|string'
+            'full_name' => 'required|string|max:255',
+            'phone_number' => 'required|string|max:20',
+            'complete_address' => 'required|string|max:1000',
+            'payment_method' => 'required|in:BANK,COD,EWALLET',
+            'notes' => 'nullable|string'
         ]);
 
-        // Here you would typically validate the coupon against database
-        // For now we'll just store it in session
-        session()->put('coupon', $request->coupon_code);
+        $cartItems = session()->get('cart', []);
+        if (empty($cartItems)) {
+            return redirect()->route('cart')->with('error', 'Keranjang anda kosong!');
+        }
 
-        return redirect()->route('cart')->with('success', 'Coupon applied!');
+        $subtotal = 0;
+        $items = [];
+        
+        foreach ($cartItems as $item) {
+            $variant = Variant::with('product')->find($item['variant_id']);
+            $product = $variant->product ?? null;
+            
+            if (!$product || !$variant) {
+                continue;
+            }
+
+            if ($variant->stock < $item['quantity']) {
+                return redirect()->route('cart')->with('error', "Stok tidak mencukupi untuk {$product->product_name}");
+            }
+
+            $price = $variant->price;
+            $items[] = [
+                'product' => $product,
+                'variant' => $variant,
+                'quantity' => $item['quantity'],
+                'price' => $price,
+                'subtotal' => $price * $item['quantity']
+            ];
+            
+            $subtotal += $price * $item['quantity'];
+        }
+
+        $vat = $subtotal * 0.1;
+        $total = $subtotal + $vat;
+
+        do {
+            $orderCode = 'ORD-' . Str::upper(Str::random(8));
+        } while (Order::where('order_code', $orderCode)->exists());
+
+        $order = Order::create([
+            'user_id' => Auth::id(),
+            'order_code' => $orderCode,
+            'total_price' => $total,
+            'address' => "Nama: {$request->full_name}\nTelp: {$request->phone_number}\nAlamat: {$request->complete_address}",
+            'payment_method' => $request->payment_method,
+            'notes' => $request->notes
+        ]);
+
+        foreach ($items as $item) {
+            OrderItem::create([
+                'order_id' => $order->id,
+                'product_id' => $item['product']->id,
+                'variant_id' => $item['variant']->id,
+                'amount' => $item['quantity'],
+                'unit_price' => $item['price'],
+                'subtotal' => $item['subtotal']
+            ]);
+
+            $variant = $item['variant'];
+            $variant->stock -= $item['quantity'];
+            $variant->save();
+        }
+
+        session()->forget('cart');
+        return redirect()->route('confirmation', ['order' => $order->id]);
+    }
+
+    public function confirmation($orderId)
+    {
+        $order = Order::with(['items.product', 'items.variant'])->findOrFail($orderId);
+        
+        if ($order->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        return view('user.confirmation', [
+            'title' => 'Konfirmasi Pesanan',
+            'order' => $order
+        ]);
     }
 }

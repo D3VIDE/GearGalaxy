@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('order_code');
+            $table->string('order_code')->unique();
             $table->decimal('total_price', 10, 2);
             $table->text('address');
+            $table->enum('payment_method', ['BANK', 'COD', 'EWALLET']);
+            $table->text('notes')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

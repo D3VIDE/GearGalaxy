@@ -11,7 +11,7 @@ class VariantAttribute extends Model
     use HasFactory;
 
     protected $fillable = ['variant_id', 'attribute_name', 'attribute_detail'];
-
+    
     public function variant()
     {
         return $this->belongsTo(Variant::class);

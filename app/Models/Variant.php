@@ -25,4 +25,18 @@ class Variant extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+
+    public function getVariantDetails(): string
+    {
+        $this->load('attributes'); // Pastikan relasi dimuat
+    
+        $details = [];
+        foreach ($this->attributes as $attr) {
+            if(is_object($attr)) { // Pastikan $attr adalah objek
+                $details[] = "{$attr->attribute_name}: {$attr->attribute_detail}";
+            }
+        }
+        
+        return $details ? implode(', ', $details) : $this->variant_name;
+    }
 }

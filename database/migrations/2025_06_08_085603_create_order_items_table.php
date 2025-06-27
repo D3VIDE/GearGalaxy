@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('variant_id');
+            $table->unsignedBigInteger('product_id');
             $table->integer('amount');
             $table->decimal('unit_price', 10, 2);
             $table->decimal('subtotal', 10, 2);
@@ -22,6 +23,7 @@ return new class extends Migration
 
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->foreign('variant_id')->references('id')->on('variants')->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
         });
     }
 

@@ -15,16 +15,6 @@ use App\Http\Controllers\AdminPagesController;
 
 Route::get('/', [UserController::class, 'DisplayHomePage'])->name('HomePage');
 Route::post('auth/logout', [UserController::class, 'logout'])->name('logout');
-// Cart routes
-Route::get('/cart', function () {
-    return view('user.cart');
-})->name('cart');
-Route::get('/checkout', function () {
-    return view('user.checkout');
-})->name('checkout');
-Route::get('/confirmation', function () {
-    return view('user.confirmation');
-})->name('confirmation');
 
 Route::get('/product/{variant}', [UserController::class, 'showProductDetail'])->name('product.detail');
 
@@ -80,7 +70,16 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/account/update-username', [AccountController::class, 'updateUsername'])->name('account.update.username');
     Route::post('/account/update-email', [AccountController::class, 'updateEmail'])->name('account.update.email');
     Route::post('/account/delete', [AccountController::class, 'deleteAccount'])->name('account.delete');
-     Route::get('/shop', [ProductController::class, 'displayProductCard'])->name('shop');
+    Route::get('/shop', [ProductController::class, 'displayProductCard'])->name('shop');
+    // Cart
+    Route::get('/cart', [CartController::class, 'index'])->name('cart');
+    Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/update/{productId}/{variantId}', [CartController::class, 'update'])->name('cart.update');
+    Route::get('/cart/remove/{productId}/{variantId}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::get('/checkout', [CartController::class, 'showCheckout'])->name('checkout');
+    Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout.post');
+    Route::get('/confirmation/{order}', [CartController::class, 'confirmation'])->name('confirmation');
+
 });
 
 // ! Ini Untuk User
