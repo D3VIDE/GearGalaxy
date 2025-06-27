@@ -26,6 +26,11 @@ class Variant extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    public function getSoldCountAttribute()
+    {
+        return $this->orderItems()->sum('amount');
+    }
+
     public function getVariantDetails(): string
     {
         $this->load('attributes'); // Pastikan relasi dimuat

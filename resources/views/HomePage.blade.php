@@ -25,27 +25,11 @@
         </div>
     </div>
 
-
-    {{-- Kategori --}}
-    <div class="container mx-auto px-4 mb-12">
-        <h3 class="text-xl font-semibold mb-4 text-gray-800">Kategori Pilihan</h3>
-        <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4">
-            @foreach($categories as $category)
-                <a href="#" class="bg-white rounded-lg shadow hover:shadow-md text-center py-6 transition-all duration-300 border border-gray-100">
-                    <div class="text-indigo-500 text-3xl mb-2">
-                        <i class="fas fa-tag"></i>
-                    </div>
-                    <p class="text-sm text-gray-700">{{ $category->category_name }}</p>
-                </a>
-            @endforeach
-        </div>
-    </div>
-
-     {{-- Flash Sale --}}
+     {{-- Produk Populer --}}
     <div class="container mx-auto px-4 my-12">
-        <h3 class="text-xl font-semibold mb-4 text-red-600">🔥 Flash Sale</h3>
+        <h3 class="text-xl font-semibold mb-4 text-red-600">🔥 Produk Populer</h3>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            @foreach($products->shuffle()->take(5) as $product)
+            @foreach($popularProducts as $product)
                 @php $variant = $product->variants->first(); @endphp
                 <div class="bg-white border-2 border-red-100 rounded-lg shadow hover:shadow-md relative">
                     <span class="absolute top-0 left-0 bg-red-500 text-white text-xs px-2 py-1 rounded-br-lg">Diskon!</span>
@@ -55,7 +39,7 @@
                         <div class="p-3 space-y-1">
                             <h4 class="text-sm font-bold text-gray-800 line-clamp-2">{{ $product->product_name }}</h4>
                             <p class="text-red-500 font-semibold">Rp{{ number_format($variant->price ?? 0, 0, ',', '.') }}</p>
-                            <p class="text-xs text-gray-500">{{ rand(10, 100) }}+ terjual</p>
+                            <div class="text-xs text-gray-500 mt-1">{{ $variant->sold_count }} terjual</div>
                             <p class="text-xs text-gray-500">{{ ucfirst($product->category->category_name) }}</p>
                         </div>
                     </a>
@@ -95,7 +79,7 @@
                         </div>
 
                         <div class="text-xs text-gray-500 mt-1">
-                            {{ rand(50, 500) }}+ terjual
+                            {{ $variant->sold_count }} terjual
                         </div>
                     </div>
                 </a>

@@ -18,14 +18,22 @@ class UserController extends Controller
      */
 
      public function DisplayHomePage()
-    {
-        $products = Product::with(['variants', 'category'])->latest()->take(10)->get();
+    {   
+        $popularProducts = Product::with(['variants.orderItems', 'category'])->get()->sortByDesc(function($product) 
+        {
+            return $product->variants->sum(function($variant) {
+                return $variant->orderItems->sum('amount');
+            });
+        })->take(5);
+
+        $products = Product::with(['variants.OrderItems', 'category'])->latest()->take(10)->get();
         $categories = Category::all();
 
         return view('HomePage', [
             'title' => 'Home',
             'categories' => $categories,
-            'products' => $products
+            'products' => $products,
+            'popularProducts' => $popularProducts
         ]);
     }
     public function showLoginForm()
