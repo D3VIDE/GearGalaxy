@@ -79,7 +79,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/checkout', [CartController::class, 'showCheckout'])->name('checkout');
     Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout.post');
     Route::get('/confirmation/{order}', [CartController::class, 'confirmation'])->name('confirmation');
-
+    Route::get('/cart/count', [CartController::class, 'getCartCount']);
 });
 Route::middleware(['auth'])->group(function () {
     // route lainnya...

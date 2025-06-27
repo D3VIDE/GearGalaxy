@@ -20,7 +20,7 @@ class CartController extends Controller
 
         foreach ($cartItems as $item) {
             $variant = Variant::with(['product', 'attributes'])->find($item['variant_id']);
-            
+
             if ($variant) {
                 $products[] = [
                     'product_id' => $variant->product->id,
@@ -64,22 +64,21 @@ class CartController extends Controller
         }
 
         $cart = session()->get('cart', []);
-        
-        $existingKey = null;
+        $found = false;
+
         foreach ($cart as $key => $item) {
             if ($item['product_id'] == $productId && $item['variant_id'] == $request->variant_id) {
-                $existingKey = $key;
+                $newQuantity = $cart[$key]['quantity'] + $request->quantity;
+                if ($variant->stock < $newQuantity) {
+                    return redirect()->back()->with('error', 'Jumlah melebihi stok yang tersedia');
+                }
+                $cart[$key]['quantity'] = $newQuantity;
+                $found = true;
                 break;
             }
         }
 
-        if ($existingKey !== null) {
-            $newQuantity = $cart[$existingKey]['quantity'] + $request->quantity;
-            if ($variant->stock < $newQuantity) {
-                return redirect()->back()->with('error', 'Jumlah melebihi stok yang tersedia');
-            }
-            $cart[$existingKey]['quantity'] = $newQuantity;
-        } else {
+        if (!$found) {
             $cart[] = [
                 'product_id' => $productId,
                 'variant_id' => $request->variant_id,
@@ -106,12 +105,12 @@ class CartController extends Controller
                     return redirect()->back()->with('error', 'Stok tidak mencukupi');
                 }
                 $cart[$key]['quantity'] = $request->quantity;
-                session()->put('cart', $cart);
                 break;
             }
         }
 
-        return redirect()->route('cart')->with('success', 'Keranjang berhasil diperbarui!');
+        session()->put('cart', $cart);
+        return redirect()->route('cart')->with('success', 'Keranjang diperbarui!');
     }
 
     public function remove($productId, $variantId)
@@ -121,12 +120,24 @@ class CartController extends Controller
         foreach ($cart as $key => $item) {
             if ($item['product_id'] == $productId && $item['variant_id'] == $variantId) {
                 unset($cart[$key]);
-                session()->put('cart', array_values($cart));
                 break;
             }
         }
 
-        return redirect()->route('cart')->with('success', 'Produk berhasil dihapus dari keranjang!');
+        session()->put('cart', array_values($cart));
+        return redirect()->route('cart')->with('success', 'Produk dihapus dari keranjang!');
+    }
+
+    public function getCartCount()
+    {
+        $cart = session()->get('cart', []);
+        $count = 0;
+        
+        foreach ($cart as $item) {
+            $count += $item['quantity'];
+        }
+        
+        return $count;
     }
 
     public function showCheckout()
@@ -138,11 +149,11 @@ class CartController extends Controller
 
         $subtotal = 0;
         $products = [];
-        
+
         foreach ($cartItems as $item) {
             $variant = Variant::with(['product', 'attributes'])->find($item['variant_id']);
             $product = $variant->product ?? null;
-            
+
             if ($product && $variant) {
                 $price = $variant->price;
                 $products[] = [
@@ -177,19 +188,17 @@ class CartController extends Controller
 
         $cartItems = session()->get('cart', []);
         if (empty($cartItems)) {
-            return redirect()->route('cart')->with('error', 'Keranjang anda kosong!');
+            return redirect()->route('cart')->with('error', 'Keranjang kosong!');
         }
 
         $subtotal = 0;
         $items = [];
-        
+
         foreach ($cartItems as $item) {
             $variant = Variant::with('product')->find($item['variant_id']);
             $product = $variant->product ?? null;
-            
-            if (!$product || !$variant) {
-                continue;
-            }
+
+            if (!$product || !$variant) continue;
 
             if ($variant->stock < $item['quantity']) {
                 return redirect()->route('cart')->with('error', "Stok tidak mencukupi untuk {$product->product_name}");
@@ -203,7 +212,7 @@ class CartController extends Controller
                 'price' => $price,
                 'subtotal' => $price * $item['quantity']
             ];
-            
+
             $subtotal += $price * $item['quantity'];
         }
 
@@ -245,7 +254,7 @@ class CartController extends Controller
     public function confirmation($orderId)
     {
         $order = Order::with(['items.product', 'items.variant'])->findOrFail($orderId);
-        
+
         if ($order->user_id !== Auth::id()) {
             abort(403);
         }
@@ -255,4 +264,5 @@ class CartController extends Controller
             'order' => $order
         ]);
     }
+    
 }
