@@ -31,16 +31,33 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             @foreach($popularProducts as $product)
                 @php $variant = $product->variants->first(); @endphp
-                <div class="bg-white border-2 border-red-100 rounded-lg shadow hover:shadow-md relative">
-                    <span class="absolute top-0 left-0 bg-red-500 text-white text-xs px-2 py-1 rounded-br-lg">Diskon!</span>
-                    <a href="#">
-                        <img src="{{ $variant && $variant->image ? asset('storage/'.$variant->image) : 'https://via.placeholder.com/300x200?text=No+Image' }}"
-                            class="w-full h-40 object-cover rounded-t-lg">
-                        <div class="p-3 space-y-1">
-                            <h4 class="text-sm font-bold text-gray-800 line-clamp-2">{{ $product->product_name }}</h4>
-                            <p class="text-red-500 font-semibold">Rp{{ number_format($variant->price ?? 0, 0, ',', '.') }}</p>
-                            <div class="text-xs text-gray-500 mt-1">{{ $variant->sold_count }} terjual</div>
-                            <p class="text-xs text-gray-500">{{ ucfirst($product->category->category_name) }}</p>
+                <div class="bg-white border-2 border-red-300 rounded-lg shadow hover:shadow-md relative">
+                    <a href="{{ route('product.detail', $product->variants->first()->id) }}" class="group block bg-white border rounded-lg shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
+                        <!-- Gambar Produk -->
+                        <img
+                            src="{{ $variant?->image ? asset('storage/' . $variant->image) : 'https://via.placeholder.com/300x250' }}"
+                            alt="{{ $product->product_name }}"
+                            class="h-[200px] w-full object-cover sm:h-[250px]"
+                        />
+
+                        <!-- Info Produk -->
+                        <div class="p-3">
+                            <p class="text-xs text-gray-500">
+                                {{ ucfirst($product->category->category_name) ?? 'Kategori' }}
+                            </p>
+
+                            <div class="mt-2 flex justify-between text-sm">
+                                <h3 class="text-gray-900 font-semibold leading-tight line-clamp-2">
+                                    {{ $product->product_name }}
+                                </h3>
+                                <p class="text-red-500 font-bold">
+                                    Rp{{ number_format($variant?->price ?? 0, 0, ',', '.') }}
+                                </p>
+                            </div>
+
+                            <div class="text-xs text-gray-500 mt-1">
+                                {{ $variant->sold_count }} terjual
+                            </div>
                         </div>
                     </a>
                 </div>
