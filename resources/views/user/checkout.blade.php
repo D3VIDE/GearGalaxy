@@ -106,24 +106,24 @@
                     @foreach($products as $item)
                     <div class="flex justify-between">
                         <span>{{ $item['product']->name }} ({{ $item['variant']->getVariantDetails() }}) × {{ $item['quantity'] }}</span>
-                        <span class="font-medium">${{ number_format($item['subtotal'], 2) }}</span>
+                        <span class="font-medium">Rp {{ number_format($item['subtotal'], 2) }}</span>
                     </div>
                     @endforeach
                     
                     <div class="border-t pt-4">
                         <div class="flex justify-between mb-2">
                             <span>SUBTOTAL</span>
-                            <span class="font-medium">${{ number_format($subtotal, 2) }}</span>
+                            <span class="font-medium">Rp {{ number_format($subtotal, 2) }}</span>
                         </div>
                         <div class="flex justify-between">
                             <span>VAT (10%)</span>
-                            <span class="font-medium">${{ number_format($vat, 2) }}</span>
+                            <span class="font-medium">Rp {{ number_format($vat, 2) }}</span>
                         </div>
                     </div>
                     
                     <div class="flex justify-between border-t pt-4">
                         <span class="font-bold">TOTAL</span>
-                        <span class="font-bold text-lg">${{ number_format($total, 2) }}</span>
+                        <span class="font-bold text-lg">Rp {{ number_format($total, 2) }}</span>
                     </div>
                 </div>
                 
