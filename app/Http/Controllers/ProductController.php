@@ -10,48 +10,94 @@ use Illuminate\Routing\Controller;
 
 class ProductController extends Controller
 {
-    public function displayProductCard()
-    {
-        // Get all variants with their product, category, and attributes
-        $variants = Variant::with([
-            'product.category',
-            'attributes'
-        ])->get();
+    // public function displayProductCard()
+    // {
+    //     // Get all variants with their product, category, and attributes
+    //     $variants = Variant::with([
+    //         'product.category',
+    //         'attributes'
+    //     ])->get();
         
-        // Group variants by product to avoid duplicates
-        $groupedVariants = $variants->groupBy('products_id');
+    //     // Group variants by product to avoid duplicates
+    //     $groupedVariants = $variants->groupBy('products_id');
         
-        // Transform the data for the view
-        $products = $groupedVariants->map(function ($productVariants) {
-            // Get the first variant as base
-            $baseVariant = $productVariants->first();
+    //     // Transform the data for the view
+    //     $products = $groupedVariants->map(function ($productVariants) {
+    //         // Get the first variant as base
+    //         $baseVariant = $productVariants->first();
             
-            $productData = [
-                'id' => $baseVariant->id,
-                'product_id' => $baseVariant->products_id,
-                'name' => $baseVariant->product->product_name,
-                'image' => $baseVariant->image ?? 'default-product-image.jpg',
-                'price' => $baseVariant->price,
-                'stock' => $baseVariant->stock,
-                'category' => $baseVariant->product->category->category_name ?? 'Uncategorized',
-                'variant_name' => $baseVariant->variant_name,
-                'attributes' => $this->prepareAttributes($productVariants, $baseVariant->id),
-                'all_variants' => $this->prepareAllVariants($productVariants)
-            ];
+    //         $productData = [
+    //             'id' => $baseVariant->id,
+    //             'product_id' => $baseVariant->products_id,
+    //             'name' => $baseVariant->product->product_name,
+    //             'image' => $baseVariant->image ?? 'default-product-image.jpg',
+    //             'price' => $baseVariant->price,
+    //             'stock' => $baseVariant->stock,
+    //             'category' => $baseVariant->product->category->category_name ?? 'Uncategorized',
+    //             'variant_name' => $baseVariant->variant_name,
+    //             'attributes' => $this->prepareAttributes($productVariants, $baseVariant->id),
+    //             'all_variants' => $this->prepareAllVariants($productVariants)
+    //         ];
             
-            // Mark if has multiple variants
-            if ($productVariants->count() > 1) {
-                $productData['has_multiple_variants'] = true;
-            }
+    //         // Mark if has multiple variants
+    //         if ($productVariants->count() > 1) {
+    //             $productData['has_multiple_variants'] = true;
+    //         }
             
-            return $productData;
-        })->values(); // Reset keys to 0,1,2...
+    //         return $productData;
+    //     })->values(); // Reset keys to 0,1,2...
         
-        return view('user.shop', [
-            'products' => $products,
-            'title' => 'Catalog Produk'
-        ]);
+    //     return view('user.shop', [
+    //         'products' => $products,
+    //         'title' => 'Catalog Produk'
+    //     ]);
+    // }
+    public function displayProductCard(Request $request)
+{
+    $categoryFilter = $request->query('category');
+
+    $variants = Variant::with(['product.category', 'attributes']);
+
+    if ($categoryFilter) {
+        $variants->whereHas('product.category', function ($query) use ($categoryFilter) {
+            $query->where('category_name', $categoryFilter);
+        });
     }
+
+    $variants = $variants->get();
+    $groupedVariants = $variants->groupBy('products_id');
+
+    $products = $groupedVariants->map(function ($productVariants) {
+        $baseVariant = $productVariants->first();
+
+        $productData = [
+            'id' => $baseVariant->id,
+            'product_id' => $baseVariant->products_id,
+            'name' => $baseVariant->product->product_name,
+            'image' => $baseVariant->image ?? 'default-product-image.jpg',
+            'price' => $baseVariant->price,
+            'stock' => $baseVariant->stock,
+            'category' => $baseVariant->product->category->category_name ?? 'Uncategorized',
+            'variant_name' => $baseVariant->variant_name,
+            'attributes' => $this->prepareAttributes($productVariants, $baseVariant->id),
+            'all_variants' => $this->prepareAllVariants($productVariants)
+        ];
+
+        if ($productVariants->count() > 1) {
+            $productData['has_multiple_variants'] = true;
+        }
+
+        return $productData;
+    })->values();
+
+    return view('user.shop', [
+        'products' => $products,
+        'title' => 'Catalog Produk',
+        'activeCategory' => $categoryFilter
+    ]);
+}
+
+    
     
     /**
      * Prepare attributes data for all variants of a product
