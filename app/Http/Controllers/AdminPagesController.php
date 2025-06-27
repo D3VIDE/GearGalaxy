@@ -2,18 +2,57 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Category, Product, Variant, VariantAttribute};
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Models\{Category, Product, Variant, VariantAttribute, OrderItem};
 
 class AdminPagesController extends Controller
 {
     public function index()
     {
-        return view('admin.dashboard', [
-            'title' => 'Dashboard'
-        ]);
+        $title = 'Dashboard';
+        $totalProducts = Product::count();
+        $totalVariants = Variant::count();
+        $totalCategories = Category::count();
+
+        $salesToday = OrderItem::whereDate('created_at', today())
+                        ->sum(DB::raw('unit_price * amount'));
+
+        $lowStockVariants = Variant::with('product')
+        ->whereNull('stock')
+        ->orWhere('stock', '<=', 5)
+        ->orderBy('stock')
+        ->take(10)
+        ->get();
+
+        // Grafik Harian (7 Hari Terakhir)
+        $dailySales = OrderItem::selectRaw("created_at::date as date, SUM(unit_price * amount) as total")
+            ->where('created_at', '>=', Carbon::now()->subDays(6))
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        // Grafik Bulanan (12 Bulan Terakhir)
+        $monthlySales = OrderItem::selectRaw("TO_CHAR(created_at, 'YYYY-MM') as month, SUM(unit_price * amount) as total")
+            ->where('created_at', '>=', Carbon::now()->subMonths(11)->startOfMonth())
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        // Grafik Tahunan (5 Tahun Terakhir)
+        $yearlySales = OrderItem::selectRaw("TO_CHAR(created_at, 'YYYY') as year, SUM(unit_price * amount) as total")
+            ->where('created_at', '>=', Carbon::now()->subYears(4)->startOfYear())
+            ->groupBy('year')
+            ->orderBy('year')
+            ->get();
+            
+        return view('admin.dashboard', compact(
+            'title','totalProducts', 'totalVariants', 'totalCategories',
+            'salesToday', 'lowStockVariants', 'dailySales','monthlySales','yearlySales'
+        ));
     }
 
     public function showAddProdukForm()

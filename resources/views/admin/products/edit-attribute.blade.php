@@ -38,11 +38,8 @@
                     Cancel
                 </a>
                 <button type="button"
-                    onclick="confirmAttributeUpdate()"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 inline-flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                    </svg>
+                    onclick="confirmCategoryUpdate()"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
                     Update Attribute
                 </button>
             </div>
