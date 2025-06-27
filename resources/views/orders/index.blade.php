@@ -23,25 +23,32 @@
                 <span class="bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">Selesai</span>
             </div>
 
-            <div class="flex gap-4">
-                <img src="https://via.placeholder.com/60" alt="Product" class="w-16 h-16 rounded border">
+            {{-- Produk per transaksi --}}
+            @foreach ($order->items as $item)
+            <div class="flex gap-4 mb-3">
+                <!-- img nya -->
+                <img src="{{ asset('storage/products/' . $item->product->image) }}" alt="Product" class="w-16 h-16 rounded border">
                 <div class="flex-1">
-                    <h2 class="text-base font-semibold text-gray-800 truncate">
-                        Produk dari Order #{{ $order->order_code }}
-                    </h2>
-                    <p class="text-sm text-gray-500">1 barang</p>
-                    <p class="mt-1 text-sm text-gray-600">Alamat: {{ $order->address }}</p>
+                    <h2 class="text-base font-semibold text-gray-800 truncate">{{ $item->product_name }}</h2>
+                    <p class="text-sm text-gray-500">{{ $item->quantity }} barang</p>
+                </div>
+                <div class="flex items-center">
+                    <a href="{{ route('product.detail', ['variant' => $item->product->slug ?? $item->product_id]) }}"
+                       class="bg-green-500 hover:bg-green-600 text-white text-sm px-4 py-2 rounded-full">
+                        Beli Lagi
+                    </a>
                 </div>
             </div>
+            @endforeach
 
-            <div class="flex justify-between items-center mt-4 border-t pt-4">
-                <div class="text-sm text-gray-600">
-                    Total Belanja: 
-                    <span class="text-lg font-bold text-gray-800">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
-                </div>
-                <a href="#" class="bg-green-500 hover:bg-green-600 text-white text-sm px-4 py-2 rounded-full">
-                    Beli Lagi
-                </a>
+            {{-- Total dan alamat --}}
+            <div class="mt-4 border-t pt-4 text-sm text-gray-600">
+                <p class="mb-1">Alamat: {{ $order->address }}</p>
+                <p>Total Belanja:
+                    <span class="text-lg font-bold text-gray-800">
+                        Rp {{ number_format($order->total_price, 0, ',', '.') }}
+                    </span>
+                </p>
             </div>
         </div>
         @endforeach
