@@ -6,6 +6,7 @@ use App\Http\Middleware\EnsureIsAdmin;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\EnsureIsRegularUser;
 use App\Http\Controllers\AdminPagesController;
@@ -79,6 +80,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/account/update-username', [AccountController::class, 'updateUsername'])->name('account.update.username');
     Route::post('/account/update-email', [AccountController::class, 'updateEmail'])->name('account.update.email');
     Route::post('/account/delete', [AccountController::class, 'deleteAccount'])->name('account.delete');
+     Route::get('/shop', [ProductController::class, 'displayProductCard'])->name('shop');
 });
 
 // ! Ini Untuk User

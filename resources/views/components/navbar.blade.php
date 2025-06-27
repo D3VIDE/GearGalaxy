@@ -17,9 +17,9 @@
             <!-- Main Navigation -->
             <div class="flex items-center justify-center space-x-1">
                 <a href="/" class="px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium">Home</a>
-                <a href="/shop" class="px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium">Shop</a>
-                <a href="/about" class="px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium">About</a>
-                <a href="/contact" class="px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium">Contact</a>
+                <a href="{{ route('shop') }}" class="px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium">Shop</a>
+                <a href="user/about" class="px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium">About</a>
+                <a href="user/contact" class="px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium">Contact</a>
             </div>
             
             <!-- Right side icons -->

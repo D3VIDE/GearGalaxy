@@ -70,6 +70,7 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             @foreach($products as $product)
                 @php $variant = $product->variants->first(); @endphp
+                 @if($variant)
                 <a href="{{ route('product.detail', $product->variants->first()->id) }}" class="group block bg-white border rounded-lg shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
                     <!-- Gambar Produk -->
                     <img
@@ -98,6 +99,7 @@
                         </div>
                     </div>
                 </a>
+                @endif
             @endforeach
         </div>
     </div>
