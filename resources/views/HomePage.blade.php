@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="bg-gray-50 pt-8">
+<div class="pt-8">
 
     {{-- Slider --}}
     <div class="container mx-auto px-4 mb-6">
@@ -70,25 +70,34 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             @foreach($products as $product)
                 @php $variant = $product->variants->first(); @endphp
-                <div class="bg-white border rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
-                    <a href="#" class="block">
-                        <img src="{{ $variant && $variant->image ? asset('storage/' . $variant->image) : 'https://via.placeholder.com/300x200?text=No+Image' }}"
-                             alt="{{ $product->name }}"
-                             class="w-full h-48 object-cover rounded-t-lg">
-                        <div class="p-3 space-y-1">
-                            <h3 class="text-sm font-semibold text-gray-800 line-clamp-2">
+                <a href="{{ route('product.detail', $product->variants->first()->id) }}" class="group block bg-white border rounded-lg shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
+                    <!-- Gambar Produk -->
+                    <img
+                        src="{{ $variant?->image ? asset('storage/' . $variant->image) : 'https://via.placeholder.com/300x250' }}"
+                        alt="{{ $product->product_name }}"
+                        class="h-[200px] w-full object-cover sm:h-[250px]"
+                    />
+
+                    <!-- Info Produk -->
+                    <div class="p-3">
+                        <p class="text-xs text-gray-500">
+                            {{ ucfirst($product->category->category_name) ?? 'Kategori' }}
+                        </p>
+
+                        <div class="mt-2 flex justify-between text-sm">
+                            <h3 class="text-gray-900 font-semibold leading-tight line-clamp-2">
                                 {{ $product->product_name }}
                             </h3>
-                            <p class="text-indigo-600 font-bold text-sm">
+                            <p class="text-indigo-600 font-bold">
                                 Rp{{ number_format($variant?->price ?? 0, 0, ',', '.') }}
                             </p>
-                            <div class="text-xs text-gray-500">{{ rand(50, 500) }}+ terjual</div>
-                            <div class="text-xs text-gray-400">
-                                {{ ucfirst($product->category->category_name) }}
-                            </div>
                         </div>
-                    </a>
-                </div>
+
+                        <div class="text-xs text-gray-500 mt-1">
+                            {{ rand(50, 500) }}+ terjual
+                        </div>
+                    </div>
+                </a>
             @endforeach
         </div>
     </div>

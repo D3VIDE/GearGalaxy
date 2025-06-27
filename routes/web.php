@@ -25,6 +25,9 @@ Route::get('/confirmation', function () {
     return view('user.confirmation');
 })->name('confirmation');
 
+Route::get('/product/{variant}', [UserController::class, 'showProductDetail'])->name('product.detail');
+
+
 // Route Guest (login/register)
 Route::middleware('guest')->group(function () {
     Route::get('auth/login', [UserController::class, 'showLoginForm'])->name('login');

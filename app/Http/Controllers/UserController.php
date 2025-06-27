@@ -49,6 +49,17 @@ class UserController extends Controller
         ]);
     }
 
+     public function showProductDetail($variantId)
+    {
+        $variant = Variant::with(['product.category', 'product.variants'])->findOrFail($variantId);
+
+        return view('user.detail', [
+            'title' => $variant->product->product_name . ' - ' . $variant->variant_name,
+            'variant' => $variant
+        ]);
+    }
+
+
     /**
      * Show the form for creating a new resource.
      */

@@ -204,7 +204,7 @@ class AdminPagesController extends Controller
             if ($variant->image) {
                 Storage::delete($variant->image);
             }
-            $data['image'] = $request->file('image')->store('variant_images');
+            $data['image'] = $request->file('image')->store('variants', 'public');
         }
 
         $variant->update($data);
