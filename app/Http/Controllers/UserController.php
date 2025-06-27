@@ -51,19 +51,12 @@ class UserController extends Controller
 
      public function showProductDetail($variantId)
     {
-    $products = Product::with(['variants', 'category'])
-        ->whereHas('variants') // Hanya produk dengan minimal 1 variant
-        ->latest()
-        ->take(10)
-        ->get();
+        $variant = Variant::with(['product.category', 'product.variants'])->findOrFail($variantId);
 
-    $categories = Category::all();
-
-    return view('HomePage', [
-        'title' => 'Home',
-        'categories' => $categories,
-        'products' => $products
-    ]);
+        return view('user.detail', [
+            'title' => $variant->product->product_name . ' - ' . $variant->variant_name,
+            'variant' => $variant
+        ]);
     }
 
 
