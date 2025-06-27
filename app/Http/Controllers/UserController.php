@@ -7,8 +7,9 @@ use Illuminate\Routing\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-
-
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\Variant;
 
 class UserController extends Controller
 {
@@ -16,11 +17,17 @@ class UserController extends Controller
      * Display a listing of the resource.
      */
 
-     public function DisplayHomePage(){
-        return view ('HomePage',[
-            'title' => 'Home'
+     public function DisplayHomePage()
+    {
+        $products = Product::with(['variants', 'category'])->latest()->take(10)->get();
+        $categories = Category::all();
+
+        return view('HomePage', [
+            'title' => 'Home',
+            'categories' => $categories,
+            'products' => $products
         ]);
-     }
+    }
     public function showLoginForm()
     {
         return view('auth.login', [

@@ -1,5 +1,143 @@
 @extends('layouts.app')
 
 @section('content')
-  <p>test</p>
-@endsection()
+<div class="bg-gray-50 pt-8">
+
+    {{-- Slider --}}
+    <div class="container mx-auto px-4 mb-6">
+        <div class="relative overflow-hidden rounded-lg shadow">
+            <div class="swiper mySwiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <img src="https://images.tokopedia.net/img/cache/1208/NsjrJu/2025/6/19/1ecf71b2-8a3e-4dbf-a72c-dab9ab82dc3a.png"
+                            class="w-full h-[370px] object-cover rounded-lg" alt="Promo 1">
+                    </div>
+                    <div class="swiper-slide">
+                        <img src="https://images.tokopedia.net/img/cache/1208/NsjrJu/2025/6/20/ec81cf36-307e-4ba4-b183-3620d458ea22.jpg"
+                            class="w-full h-[370px] object-cover rounded-lg" alt="Promo 2">
+                    </div>
+                    <div class="swiper-slide">
+                        <img src="https://images.tokopedia.net/img/cache/1208/NsjrJu/2025/6/26/ad40a8b7-a8ca-4ac6-91fb-ef54a3b2e1c1.png"
+                            class="w-full h-[370px] object-cover rounded-lg" alt="Promo 3">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {{-- Kategori --}}
+    <div class="container mx-auto px-4 mb-12">
+        <h3 class="text-xl font-semibold mb-4 text-gray-800">Kategori Pilihan</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4">
+            @foreach($categories as $category)
+                <a href="#" class="bg-white rounded-lg shadow hover:shadow-md text-center py-6 transition-all duration-300 border border-gray-100">
+                    <div class="text-indigo-500 text-3xl mb-2">
+                        <i class="fas fa-tag"></i>
+                    </div>
+                    <p class="text-sm text-gray-700">{{ $category->category_name }}</p>
+                </a>
+            @endforeach
+        </div>
+    </div>
+
+     {{-- Flash Sale --}}
+    <div class="container mx-auto px-4 my-12">
+        <h3 class="text-xl font-semibold mb-4 text-red-600">🔥 Flash Sale</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            @foreach($products->shuffle()->take(5) as $product)
+                @php $variant = $product->variants->first(); @endphp
+                <div class="bg-white border-2 border-red-100 rounded-lg shadow hover:shadow-md relative">
+                    <span class="absolute top-0 left-0 bg-red-500 text-white text-xs px-2 py-1 rounded-br-lg">Diskon!</span>
+                    <a href="#">
+                        <img src="{{ $variant && $variant->image ? asset('storage/'.$variant->image) : 'https://via.placeholder.com/300x200?text=No+Image' }}"
+                            class="w-full h-40 object-cover rounded-t-lg">
+                        <div class="p-3 space-y-1">
+                            <h4 class="text-sm font-bold text-gray-800 line-clamp-2">{{ $product->product_name }}</h4>
+                            <p class="text-red-500 font-semibold">Rp{{ number_format($variant->price ?? 0, 0, ',', '.') }}</p>
+                            <p class="text-xs text-gray-500">{{ rand(10, 100) }}+ terjual</p>
+                            <p class="text-xs text-gray-500">{{ ucfirst($product->category->category_name) }}</p>
+                        </div>
+                    </a>
+                </div>
+            @endforeach
+        </div>
+    </div>
+
+    {{-- Produk Terbaru --}}
+    <div class="container mx-auto px-4">
+        <h3 class="text-xl font-semibold mb-4 text-gray-800">Produk Terbaru</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            @foreach($products as $product)
+                @php $variant = $product->variants->first(); @endphp
+                <div class="bg-white border rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
+                    <a href="#" class="block">
+                        <img src="{{ $variant && $variant->image ? asset('storage/' . $variant->image) : 'https://via.placeholder.com/300x200?text=No+Image' }}"
+                             alt="{{ $product->name }}"
+                             class="w-full h-48 object-cover rounded-t-lg">
+                        <div class="p-3 space-y-1">
+                            <h3 class="text-sm font-semibold text-gray-800 line-clamp-2">
+                                {{ $product->product_name }}
+                            </h3>
+                            <p class="text-indigo-600 font-bold text-sm">
+                                Rp{{ number_format($variant?->price ?? 0, 0, ',', '.') }}
+                            </p>
+                            <div class="text-xs text-gray-500">{{ rand(50, 500) }}+ terjual</div>
+                            <div class="text-xs text-gray-400">
+                                {{ ucfirst($product->category->category_name) }}
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            @endforeach
+        </div>
+    </div>
+
+    {{-- Footer --}}
+    <footer class="bg-gray-800 text-white mt-12">
+        {{-- Keunggulan --}}
+        <div class="container mx-auto px-4 pb-6 pt-8 border-t border-gray-700">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-gray-300">
+                <div>
+                    <i class="fas fa-shipping-fast text-indigo-400 text-2xl mb-1"></i>
+                    <h4 class="text-sm font-bold">Gratis Ongkir</h4>
+                    <p class="text-xs">Seluruh Indonesia</p>
+                </div>
+                <div>
+                    <i class="fas fa-shield-alt text-indigo-400 text-2xl mb-1"></i>
+                    <h4 class="text-sm font-bold">Transaksi Aman</h4>
+                    <p class="text-xs">Pembayaran dijamin</p>
+                </div>
+                <div>
+                    <i class="fas fa-star text-indigo-400 text-2xl mb-1"></i>
+                    <h4 class="text-sm font-bold">Produk Terbaik</h4>
+                    <p class="text-xs">Rating tinggi</p>
+                </div>
+                <div>
+                    <i class="fas fa-headset text-indigo-400 text-2xl mb-1"></i>
+                    <h4 class="text-sm font-bold">Support 24/7</h4>
+                    <p class="text-xs">Siap membantu</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-gray-900 text-center py-3 text-xs text-gray-400">
+            &copy; {{ date('Y') }} GearGalaxy. All rights reserved.
+        </div>
+    </footer>
+</div>
+
+{{-- SwiperJS --}}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        new Swiper('.mySwiper', {
+            autoplay: {
+                delay: 4000,
+                disableOnInteraction: false,
+            },
+            loop: true
+        });
+    });
+</script>
+@endsection
