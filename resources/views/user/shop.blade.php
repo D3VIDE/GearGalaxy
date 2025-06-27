@@ -104,139 +104,132 @@
             </div>
         @endforeach
     </div>
-@endsection
 
-@section('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-        // Handle variant navigation arrows
-        document.querySelectorAll('.variant-nav').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const targetId = this.getAttribute('data-target');
-                const direction = this.getAttribute('data-direction');
-                const productCard = this.closest('[data-product-id]');
-                const productId = productCard ? productCard.getAttribute('data-product-id') : null;
-                const variantData = productId ? document.querySelector(`.variant-data[data-product-id="${productId}"]`) : null;
-                
-                if (variantData) {
-                    const variants = Array.from(variantData.children);
-                    
-                    // Find current variant index
-                    let currentIndex = variants.findIndex(v => 
-                        v.getAttribute('data-variant-id') == targetId);
-                    
-                    // Determine new index
-                    if (currentIndex === -1) currentIndex = 0;
-                    
-                    let newIndex;
-                    if (direction === 'prev') {
-                        newIndex = (currentIndex - 1 + variants.length) % variants.length;
-                    } else {
-                        newIndex = (currentIndex + 1) % variants.length;
-                    }
-                    
-                    const newVariant = variants[newIndex];
-                    
-                    // Update display
-                    const card = this.closest('.group');
-                    if (card) {
-                        card.querySelector(`#variant-image-${targetId}`).src = 
-                            newVariant.getAttribute('data-variant-image');
-                        card.querySelector(`#variant-name-${targetId}`).textContent = 
-                            newVariant.getAttribute('data-variant-name');
-                        card.querySelector(`#variant-price-${targetId}`).textContent = 
-                            '$' + newVariant.getAttribute('data-variant-price');
-                        
-                        const stockElement = card.querySelector(`#variant-stock-${targetId}`);
-                        if (stockElement) {
-                            stockElement.textContent = newVariant.getAttribute('data-variant-stock');
-                        }
-                    }
-                    
-                    // Update all navigation buttons for this product
-                    document.querySelectorAll(`.variant-nav[data-target="${targetId}"]`).forEach(btn => {
-                        btn.setAttribute('data-target', newVariant.getAttribute('data-variant-id'));
-                    });
-                    
-                    // Update active attributes
-                    updateActiveAttributes(productId, newVariant);
-                }
-            });
-        });
-        
-        // Rest of your JavaScript remains the same...
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Track current variant index for each product
+    const currentVariantIndices = {};
+
+    // Initialize current variant indices
+    document.querySelectorAll('.variant-data').forEach(variantData => {
+        const productId = variantData.getAttribute('data-product-id');
+        currentVariantIndices[productId] = 0;
     });
 
-            // Function to update active attributes
-            function updateActiveAttributes(productId, variantElement) {
-                // Reset all attributes first
-                document.querySelectorAll(`[data-product-id="${productId}"] [data-attribute-name]`).forEach(el => {
-                    const textSpan = el.querySelector('span:last-child');
-                    if (textSpan) {
-                        textSpan.classList.remove('font-bold', 'text-blue-600');
-                        textSpan.classList.add('text-gray-600');
-                    }
-                });
-
-                // Set new active attributes
-                variantElement.getAttributeNames().forEach(attrName => {
-                    if (attrName.startsWith('data-') && !attrName.endsWith('-detail') &&
-                        !['data-variant-id', 'data-variant-name', 'data-variant-image',
-                            'data-variant-price', 'data-variant-stock'
-                        ].includes(attrName)) {
-                        const attrValue = variantElement.getAttribute(attrName);
-                        const attributeElements = document.querySelectorAll(
-                            `[data-product-id="${productId}"] [data-attribute-name="${attrName.replace('data-', '')}"][data-attribute-detail="${attrValue}"]`
-                        );
-
-                        attributeElements.forEach(el => {
-                            const textSpan = el.querySelector('span:last-child');
-                            if (textSpan) {
-                                textSpan.classList.add('font-bold', 'text-blue-600');
-                                textSpan.classList.remove('text-gray-600');
-                            }
-                        });
-                    }
-                });
-            }
-
-            // Existing attribute click handler
-            function switchToVariantWithAttribute(productId, attributeName, attributeDetail) {
-                const variantData = document.querySelector(`.variant-data[data-product-id="${productId}"]`);
-                if (!variantData) return;
-
+    // Handle variant navigation arrows
+    document.querySelectorAll('.variant-nav').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const productId = this.getAttribute('data-target');
+            const direction = this.getAttribute('data-direction');
+            const productCard = this.closest('.group');
+            const variantData = productCard.querySelector('.variant-data');
+            
+            if (variantData) {
                 const variants = Array.from(variantData.children);
-                const targetVariant = variants.find(v => {
-                    return v.getAttribute(`data-${attributeName}`) === attributeDetail;
-                });
-
-                if (targetVariant) {
-                    // Update display
-                    document.getElementById(`variant-image-${productId}`).src =
-                        targetVariant.getAttribute('data-variant-image');
-                    document.getElementById(`variant-name-${productId}`).textContent =
-                        targetVariant.getAttribute('data-variant-name');
-                    document.getElementById(`variant-price-${productId}`).textContent =
-                        '$' + targetVariant.getAttribute('data-variant-price');
-
-                    // Update stock display if exists
-                    const stockElement = document.querySelector(`#variant-stock-${productId}`);
-                    if (stockElement) {
-                        stockElement.textContent = targetVariant.getAttribute('data-variant-stock');
-                    }
-
-                    // Update active attributes
-                    updateActiveAttributes(productId, targetVariant);
-
-                    // Update navigation buttons target
-                    document.querySelectorAll(`.variant-nav[data-target="${productId}"]`).forEach(btn => {
-                        btn.setAttribute('data-target', targetVariant.getAttribute('data-variant-id'));
-                    });
+                let currentIndex = currentVariantIndices[productId] || 0;
+                
+                // Determine new index
+                let newIndex;
+                if (direction === 'prev') {
+                    newIndex = (currentIndex - 1 + variants.length) % variants.length;
+                } else {
+                    newIndex = (currentIndex + 1) % variants.length;
                 }
+                
+                const newVariant = variants[newIndex];
+                currentVariantIndices[productId] = newIndex;
+                
+                // Update display
+                updateVariantDisplay(productCard, productId, newVariant);
+                
+                // Update all navigation buttons for this product
+                productCard.querySelectorAll('.variant-nav').forEach(btn => {
+                    btn.setAttribute('data-target', productId);
+                });
             }
         });
-    </script>
+    });
+    
+    // Function to update variant display
+    function updateVariantDisplay(productCard, productId, variant) {
+        // Update main elements
+        productCard.querySelector(`#variant-image-${productId}`).src = 
+            variant.getAttribute('data-variant-image');
+        productCard.querySelector(`#variant-name-${productId}`).textContent = 
+            variant.getAttribute('data-variant-name');
+        productCard.querySelector(`#variant-price-${productId}`).textContent = 
+            '$' + variant.getAttribute('data-variant-price');
+        
+        // Update stock display if exists
+        const stockElement = productCard.querySelector('.absolute.top-2.right-2');
+        if (stockElement) {
+            stockElement.textContent = 'Stock: ' + variant.getAttribute('data-variant-stock');
+        }
+        
+        // Update active attributes
+        updateActiveAttributes(productId, variant);
+    }
+    
+    // Function to update active attributes
+    function updateActiveAttributes(productId, variantElement) {
+        const productCard = document.querySelector(`.variant-data[data-product-id="${productId}"]`).closest('.group');
+        
+        // Reset all attributes first
+        productCard.querySelectorAll('[data-attribute-name]').forEach(el => {
+            const textSpan = el.querySelector('span:last-child');
+            if (textSpan) {
+                textSpan.classList.remove('font-bold', 'text-blue-600');
+                textSpan.classList.add('text-gray-600');
+            }
+        });
+
+        // Set new active attributes
+        variantElement.getAttributeNames().forEach(attrName => {
+            if (attrName.startsWith('data-') && !attrName.endsWith('-detail') &&
+                !['data-variant-id', 'data-variant-name', 'data-variant-image',
+                    'data-variant-price', 'data-variant-stock'
+                ].includes(attrName)) {
+                const attrValue = variantElement.getAttribute(attrName);
+                const attributeName = attrName.replace('data-', '');
+                
+                productCard.querySelectorAll(`[data-attribute-name="${attributeName}"][data-attribute-detail="${attrValue}"]`).forEach(el => {
+                    const textSpan = el.querySelector('span:last-child');
+                    if (textSpan) {
+                        textSpan.classList.add('font-bold', 'text-blue-600');
+                        textSpan.classList.remove('text-gray-600');
+                    }
+                });
+            }
+        });
+    }
+
+    // Attribute click handler
+    function switchToVariantWithAttribute(productId, attributeName, attributeDetail) {
+        const variantData = document.querySelector(`.variant-data[data-product-id="${productId}"]`);
+        if (!variantData) return;
+
+        const variants = Array.from(variantData.children);
+        const targetVariant = variants.find(v => {
+            return v.getAttribute(`data-${attributeName}`) === attributeDetail;
+        });
+
+        if (targetVariant) {
+            const productCard = variantData.closest('.group');
+            const variantIndex = variants.indexOf(targetVariant);
+            currentVariantIndices[productId] = variantIndex;
+            
+            updateVariantDisplay(productCard, productId, targetVariant);
+            
+            // Update navigation buttons target
+            productCard.querySelectorAll('.variant-nav').forEach(btn => {
+                btn.setAttribute('data-target', productId);
+            });
+        }
+    }
+});
+</script>
+
 @endsection
