@@ -81,6 +81,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/confirmation/{order}', [CartController::class, 'confirmation'])->name('confirmation');
 
 });
+Route::middleware(['auth'])->group(function () {
+    // route lainnya...
+
+    // My Orders / History
+    Route::get('/orders', [App\Http\Controllers\OrderController::class, 'index'])->name('orders.index');
+});
 
 // ! Ini Untuk User
 // Route::middleware(['auth', EnsureIsRegularUser::class])->group(function(){
