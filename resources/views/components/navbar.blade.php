@@ -18,24 +18,28 @@
             <div class="flex items-center justify-center space-x-1">
                 <a href="/" class="px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium">Home</a>
                 <a href="{{ route('shop') }}" class="px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium">Shop</a>
-                <a href="user/about" class="px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium">About</a>
-                <a href="user/contact" class="px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium">Contact</a>
             </div>
             
             <!-- Right side icons -->
             <div class="flex items-center space-x-4">
                 <div class="relative">
-                    <input type="text" placeholder="Search..."
-                        class="py-2 px-4 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 w-64">
-                    <button class="absolute right-3 top-2 text-gray-500">
-                        <i class="fas fa-search"></i>
-                    </button>
+                    <form action="{{ route('search') }}" method="GET" class="flex-1 max-w-xl mx-4">
+                        <div class="relative">
+                            <input type="text" 
+                                name="query" 
+                                placeholder="Cari produk..." 
+                                class="w-full py-2 px-4 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                value="{{ request('query') }}"
+                                required
+                                minlength="2">
+                            <button type="submit" class="absolute right-3 top-2 text-gray-500 hover:text-indigo-600">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
                 </div>
                 
                 <div class="flex items-center space-x-4">
-                    <a href="/wishlist" class="text-gray-700 hover:text-indigo-600 relative">
-                        <i class="far fa-heart text-xl"></i>
-                    </a>
                     <a href="/cart" class="text-gray-700 hover:text-indigo-600 relative">
                         <i class="fas fa-shopping-cart text-xl"></i>
                         <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
@@ -105,13 +109,20 @@
         
         <!-- Mobile search (hidden by default) -->
         <div class="mobile-search hidden mt-3">
-            <div class="relative">
-                <input type="text" placeholder="Search products..."
-                    class="w-full py-2 px-4 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <button class="absolute right-3 top-2 text-gray-500">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
+            <form action="{{ route('search') }}" method="GET" class="flex-1 max-w-xl mx-4">
+                <div class="relative">
+                    <input type="text" 
+                        name="query" 
+                        placeholder="Cari produk..." 
+                        class="w-full py-2 px-4 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        value="{{ request('query') }}"
+                        required
+                        minlength="2">
+                    <button type="submit" class="absolute right-3 top-2 text-gray-500 hover:text-indigo-600">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </nav>
@@ -120,8 +131,6 @@
 <div class="mobile-menu hidden bg-white shadow-lg rounded-md mx-4 mt-2 py-2 absolute z-50 w-[calc(100%-2rem)]">
     <a href="/" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">Home</a>
     <a href="/shop" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">Shop</a>
-    <a href="/about" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">About</a>
-    <a href="/contact" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50">Contact</a>
     
     <div class="border-t border-gray-200 mt-2 pt-2">
         @auth

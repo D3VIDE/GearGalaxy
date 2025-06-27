@@ -102,4 +102,26 @@ class ProductController extends Controller
             ];
         })->toArray();
     }
+
+    public function search(Request $request)
+    {
+        $request->validate([
+            'query' => 'required|string|min:2'
+        ]);
+
+        $query = strtolower($request->input('query'));
+        
+        $products = Product::with(['variants', 'category'])
+            ->whereRaw('LOWER(product_name) LIKE ?', ['%'.$query.'%'])
+            ->orWhereHas('variants', function($q) use ($query) {
+                $q->whereRaw('LOWER(variant_name) LIKE ?', ['%'.$query.'%']);
+            })
+            ->orderByDesc('created_at')
+            ->paginate(12);
+        
+        return view('search-results', [
+            'products' => $products,
+            'query' => $request->input('query') // Return original query for display
+        ]);
+    }
 }

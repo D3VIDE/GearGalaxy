@@ -17,7 +17,7 @@ Route::get('/', [UserController::class, 'DisplayHomePage'])->name('HomePage');
 Route::post('auth/logout', [UserController::class, 'logout'])->name('logout');
 
 Route::get('/product/{variant}', [UserController::class, 'showProductDetail'])->name('product.detail');
-
+Route::get('/search', [ProductController::class, 'search'])->name('search');
 
 // Route Guest (login/register)
 Route::middleware('guest')->group(function () {
