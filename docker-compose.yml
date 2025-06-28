@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # Database Service
+  db:
+    image: postgres:15
+    container_name: wfduas_db
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-wfduas}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-P4T5xi}
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - wfduas_network
+
+  # PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wfduas_app
+    volumes:
+      - .:/var/www
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE:-wfduas}
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-P4T5xi}
+    depends_on:
+      - db
+    networks:
+      - wfduas_network
+
+  # Node Service (terpisah)
+  node:
+    image: node:18
+    container_name: wfduas_node
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    ports:
+      - "5173:5173"
+    networks:
+      - wfduas_network
+    restart: unless-stopped  # Auto-restart jika crash
+    tty: true               # Mempertahankan container tetap running
+    stdin_open: true        # Memungkinkan interaksi
+    command: ["tail", "-f", "/dev/null"]  # Command dummy untuk menjaga container tetap hidup
+  # Nginx Service
+  nginx:
+    image: nginx:alpine
+    container_name: wfduas_nginx
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www
+      - ./nginx:/etc/nginx/conf.d 
+    depends_on:
+      - app
+    networks:
+      - wfduas_network
+
+volumes:
+  dbdata:
+
+networks:
+  wfduas_network:
+    driver: bridge

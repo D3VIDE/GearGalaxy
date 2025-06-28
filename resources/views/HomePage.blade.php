@@ -56,7 +56,7 @@
                                 </div>
 
                                 <div class="text-xs text-gray-500 mt-1">
-                                    {{ $variant->sold_count }} terjual
+                                     {{ $product->total_sold }} terjual
                                 </div>
                             </div>
                         </a>
@@ -97,7 +97,7 @@
                             </div>
 
                             <div class="text-xs text-gray-500 mt-1">
-                                {{ $variant->sold_count }} terjual
+                                  {{ $product->total_sold }} terjual
                             </div>
                         </div>
                     </a>

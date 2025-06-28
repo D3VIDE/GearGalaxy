@@ -19,19 +19,37 @@ class UserController extends Controller
 
      public function DisplayHomePage()
     {   
-        $popularProducts = Product::with(['variants.orderItems', 'category'])->get()->sortByDesc(function($product) 
-        {
-            return $product->variants->sum(function($variant) {
+        // Hitung produk populer (total terjual dari semua variannya)
+    $popularProducts = Product::with(['variants.orderItems', 'category'])
+        ->get()
+        ->map(function ($product) {
+            // Hitung total terjual dari semua varian produk ini
+            $totalSold = $product->variants->sum(function ($variant) {
                 return $variant->orderItems->sum('amount');
             });
-        })->take(5);
+            
+            // Tambahkan field virtual `total_sold` ke produk
+            $product->total_sold = $totalSold;
+            return $product;
+        })
+        ->sortByDesc('total_sold') // Urutkan berdasarkan total terjual
+        ->take(5);
 
-        $products = Product::with(['variants.OrderItems', 'category'])->latest()->take(10)->get();
-        $categories = Category::all();
+    // Produk terbaru (tetap ambil varian pertama)
+     $products = Product::with(['variants.orderItems', 'category'])
+        ->latest()
+        ->take(5)
+        ->get()
+        ->map(function ($product) {
+            $product->total_sold = $product->variants->sum(function ($variant) {
+                return $variant->orderItems->sum('amount');
+            });
+            return $product;
+        });
 
         return view('HomePage', [
             'title' => 'Home',
-            'categories' => $categories,
+            'categories' => Category::all(),
             'products' => $products,
             'popularProducts' => $popularProducts
         ]);
